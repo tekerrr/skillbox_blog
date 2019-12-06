@@ -4,12 +4,17 @@
 namespace App;
 
 
+use App\Controller\Auth;
+use App\Controller\Controller;
+use App\Exception\ForbiddenException;
 
 class Route
 {
     private $method;
     private $path;
     private $callback;
+    private $groups = ['everybody'];
+    private $redirectPath;
 
     /**
      * Route constructor.
@@ -22,6 +27,23 @@ class Route
         $this->method = $method;
         $this->path = $this->preparePath($path);
         $this->callback = $callback;
+        $this->redirectPath = PATH_DEFAULT;
+    }
+
+    /**
+     * @param array $groups
+     */
+    public function setGroups(array $groups): void
+    {
+        $this->groups = $groups;
+    }
+
+    /**
+     * @param string $path
+     */
+    public function setRedirectPath(string $path): void
+    {
+        $this->redirectPath = $path;
     }
 
     /**
@@ -49,7 +71,46 @@ class Route
      */
     public function run($uri)
     {
-        return call_user_func_array($this->prepareCallback($this->callback), $this->getParams($this->preparePath($uri)));
+        if ($this->checkGroups()) {
+            return call_user_func_array(
+                $this->prepareCallback($this->callback),
+                $this->getParams($this->preparePath($uri))
+            );
+        }
+
+        $this->redirect();
+    }
+
+    /**
+     * @throws ForbiddenException
+     */
+    private function redirect(): void
+    {
+        if (($redirectPath = $this->redirectPath) == '403') {
+            throw new ForbiddenException();
+        }
+        Router::redirectTo($this->redirectPath);
+    }
+
+    /**
+     * @return bool
+     */
+    private function checkGroups(): bool
+    {
+        if (in_array('everybody', $this->groups)) {
+            return true;
+        }
+
+        $userGroups = Auth::getInstance()->get('user.groups');
+        if (in_array('all', $this->groups)) {
+            return ! empty($userGroups);
+        }
+
+        if (in_array('none', $this->groups)) {
+            return empty($userGroups);
+        }
+
+        return Auth::getInstance()->checkGroups($this->groups);
     }
 
     /**
@@ -77,7 +138,7 @@ class Route
             return $callback;
         }
 
-        throw new \Exception('Callback ' . (string) $callback . ' не может быть вызван');
+        throw new \Exception('Callback ' . (string)$callback . ' не может быть вызван');
     }
 
     /**

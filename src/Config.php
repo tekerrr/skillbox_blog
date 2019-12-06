@@ -10,8 +10,11 @@ final class Config // Singleton
     private static $instance;
     private $configs = [];
 
-    private function __construct() {
-        $this->configs['db'] = require(CONFIG_DIR . 'db.php');
+    private function __construct()
+    {
+        foreach (glob(CONFIG_DIR . '*.php') as $path) {
+            $this->configs[pathinfo($path, PATHINFO_FILENAME)] = require($path);
+        }
     }
 
     private function __clone() {}
@@ -26,9 +29,22 @@ final class Config // Singleton
         return static::$instance;
     }
 
-    public function get(string $config, $default = null)
+    public function get(string $request, $default = null)
     {
-        return array_get($this->configs, $config, $default);
+        return array_get($this->configs, $request, $default);
+    }
+
+    public function set(string $config, $value)
+    {
+        $array = explode('.', $config);
+
+        for ($i = count($array) - 1; $i > 0; --$i) {
+            $value = [$array[$i] => $value];
+        }
+        $value = array_merge($this->configs[$array[0]] ?? [], $value);
+
+        $content = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($value, true) . ';' . PHP_EOL;
+
+        file_put_contents(CONFIG_DIR . $array[0] . '.php', $content);
     }
 }
-

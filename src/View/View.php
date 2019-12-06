@@ -8,30 +8,35 @@ use App\Renderable;
 
 class View implements Renderable
 {
-    private $path;
+    private $location;
     private $config;
 
-    public function __construct(string $path, array $config = [])
+    public function __construct(string $location, array $config = [])
     {
-        $this->path = $path;
-        $this->config = $config;
+        $this->location = $location;
+        $this->setConfig($config);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function render()
     {
-        if (file_exists($page = VIEW_DIR . $this->formatPath($this->path))) {
+        if (file_exists($page = VIEW_DIR . $this->formatLocation($this->location))) {
             extract($this->config);
             include $page;
-        } else {
-            throw new \Exception('Не сущетсует страница по указанному пути : ' . $this->path);
         }
     }
 
-    private function formatPath(string $path): string
+    public function setConfig(array $config): void
     {
-        return str_replace('.','/', $path) . '.php';
+        $this->config = $config;
+    }
+
+    public function addToConfig(array $additionalConfig): void
+    {
+        $this->config = array_merge($this->config, $additionalConfig);
+    }
+
+    private function formatLocation(string $path): string
+    {
+        return str_replace('.','/', trim($path)) . '.php';
     }
 }

@@ -771,7 +771,7 @@ class Model
 	 * @param array $attributes Array of the models attributes
 	 * @param boolean $validate True if the validators should be run
 	 * @param boolean $guard_attributes Set to true to guard protected/non-accessible attributes
-	 * @return Model
+	 * @return
 	 */
 	public static function create($attributes, $validate=true, $guard_attributes=true)
 	{

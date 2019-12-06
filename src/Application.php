@@ -4,6 +4,8 @@
 namespace App;
 
 
+use App\Controller\Auth;
+
 class Application
 {
     private $router;
@@ -26,12 +28,16 @@ class Application
             $db['host'],
             $db['name']
         )]);
+        \ActiveRecord\Connection::$datetime_format = 'Y-m-d H:i:s';
     }
 
     public function run()
     {
+        Auth::getInstance()->run();
+
         try {
             $result = $this->router->dispatch();
+
             if (is_object($result) && $result instanceof Renderable) {
                 $result->render();
             } else {
