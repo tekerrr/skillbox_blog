@@ -1,6 +1,6 @@
 <?php
 
-include VIEW_LAYOUT_DIR . 'header.php';
+include VIEW_HEADER;
 
 ?>
 
@@ -12,6 +12,6 @@ include VIEW_LAYOUT_DIR . 'header.php';
 
 <?php
 
-include VIEW_LAYOUT_DIR . 'footer.php';
+include VIEW_FOOTER;
 
 ?>

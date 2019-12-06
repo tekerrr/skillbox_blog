@@ -5,7 +5,7 @@ namespace App\Controller\Form;
 
 
 use App\Controller\Form;
-use App\Validation\Form\ChainOfResponsibility\EmptyField;
+use App\Validation\Rules\EmptyField;
 
 class AddComment extends Form
 {

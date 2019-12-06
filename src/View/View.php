@@ -37,6 +37,6 @@ class View implements Renderable
 
     protected function formatLocation(string $path): string
     {
-        return str_replace('.','/', trim($path)) . '.php';
+        return '/' . str_replace('.','/', trim($path)) . '.php';
     }
 }

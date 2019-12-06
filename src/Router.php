@@ -4,8 +4,7 @@
 namespace App;
 
 
-use App\Http\Exception\NotFound;
-use App\Http\Response;
+use App\Formatter\Path;
 
 class Router
 {
@@ -18,14 +17,19 @@ class Router
         return self::$currentPath;
     }
 
-    public static function getFullGetRequest(): string
-    {
-        return $_SERVER['QUERY_STRING'] ?? '';
-    }
-
     public static function isActivePath(string $path): string
     {
-        return stristr(self::getCurrentPath(), $path) ? 'active' : '';
+        return preg_match(Route::getMatchExpression($path), self::getCurrentPath()) ? 'active' : '';
+    }
+
+    public function setRest(Rest $rest)
+    {
+        foreach ($rest->getRoutes() as $route) {
+            $this->routes[] = new Route($route['method'], $route['path'], $route['controllerMethod']);
+            if (isset($route['groups'])) {
+                $this->setAccessForLastRoute($route['groups'], $route['redirectPath']);
+            }
+        }
     }
 
     public function get($path, $callback): self
@@ -40,26 +44,35 @@ class Router
         return $this;
     }
 
+    public function put($path, $callback): self
+    {
+        $this->routes[] = new Route('put', $path, $callback);
+        return $this;
+    }
+
+    public function delete($path, $callback): self
+    {
+        $this->routes[] = new Route('delete', $path, $callback);
+        return $this;
+    }
+
     /**
      * @return mixed
-     * @throws \App\Http\Exception\NotFound
      * @throws \Exception
      */
     public function dispatch()
     {
-        if (! $method = $this->getRequestType()) {
-            return Response::redirect($this->defaultRedirectPath);
-        }
+        $method = $this->getRequestType();
         $keys = $this->getKeysFromRequest($method);
 
         foreach ($keys as $uri) {
-            if ($route = $this->findCurrentRoute($method, $uri)) {
+            if ($route = $this->findCurrentRoute($method, $uri = (new Path())->format($uri))) {
                 self::$currentPath = $uri;
                 return $route->run($uri);
             }
         }
 
-        throw new NotFound();
+        return new Http\NotFoundResponse();
     }
 
     public function setDefaultRedirectPath(string $defaultRedirectPath): void
@@ -79,7 +92,17 @@ class Router
      */
     private function getRequestType(): string
     {
-        return empty($_POST) ? (empty($_GET) ? '' : 'get') : 'post';
+        $method = 'get';
+
+        if($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if(isset($_POST['_method']) && ($_POST['_method'] == 'PUT' || $_POST['_method'] == 'DELETE')) {
+                $method = strtolower($_POST['_method']);
+            } else {
+                $method = 'post';
+            }
+        }
+
+        return $method;
     }
 
     /**
@@ -88,7 +111,12 @@ class Router
      */
     private function getKeysFromRequest(string $method): array
     {
-        return array_keys($method == 'post' ? $_POST : $_GET);
+        if ($method == 'get') {
+            return [$_GET['path'] ?? ''];
+        } else {
+            return array_keys($_POST);
+        }
+
     }
 
     private function findCurrentRoute($method, $path): ?Route

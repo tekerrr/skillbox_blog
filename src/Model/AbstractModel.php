@@ -5,6 +5,7 @@ namespace App\Model;
 
 
 use ActiveRecord\Model;
+use App\Formatter\RusDate;
 
 abstract class AbstractModel extends Model
 {
@@ -39,26 +40,9 @@ abstract class AbstractModel extends Model
         $attributes = parent::attributes();
 
         if (isset($attributes['create_time']) && $attributes['create_time'] instanceof \DateTime) {
-            $attributes['create_time'] = $this->getRusDate($attributes['create_time']);
+            $attributes['create_time'] = (new RusDate())->format($attributes['create_time']);
         }
 
         return $attributes;
-    }
-
-    private function getRusDate(\DateTime $dateTime, bool $withHours = true)
-    {
-        $date = $dateTime->format('Y-m-d H:i:s');
-        $yy = (int) substr($date, 0,4);
-        $mm = (int) substr($date, 5,2);
-        $dd = (int) substr($date, 8,2);
-
-        if ($withHours) {
-            $hours = ' ' . substr($date,11,5);
-        }
-
-        $month =  ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-
-        return $dd . ' ' . $month[$mm - 1]. ' ' . $yy . ' г.' . $hours;
     }
 }

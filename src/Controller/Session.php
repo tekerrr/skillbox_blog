@@ -10,7 +10,7 @@ use App\Model\User;
 
 class Session
 {
-    public static function start(): void
+    public function start(): void
     {
         $config = Config::getInstance()->get('session');
 
@@ -18,35 +18,80 @@ class Session
         ini_set('session.gc_maxlifetime', $config['session_lifetime']);
         session_start();
 
-        Cookies::set(session_name(),session_id(),$config['session_lifetime']);
+        (new Cookies())->set(session_name(), session_id(), $config['session_lifetime']);
     }
 
-    public static function update(User $user = null): void
+    public function updateUser(User $user = null): void
     {
-        self::clean();
+        $this->clean();
 
         if ($user) {
-            $_SESSION['user'] = $user->attributes();
+            $this->put('user', $user->attributes());
             if ($subscriber = Subscriber::find_by_email_and_active($user->email, true)) {
-                $_SESSION['sub'] = $subscriber->attributes();
+                $this->put('sub', $subscriber->attributes());
             }
         }
     }
 
-    public static function destroy(): void
+    public function destroy(): void
     {
-        Cookies::clean([session_name()]);
+        (new Cookies())->clean([session_name()]);
         session_destroy();
         unset($_SESSION);
     }
 
-    public static function clean(): void
+    public function clean(): void
     {
         $_SESSION = [];
     }
 
-    public static function get(string $request)
+    public function get(string $key, $default = null)
     {
-        return array_get($_SESSION, $request, null);
+        $result = array_get($_SESSION, $key, $default);
+
+        if ($this->checkFlash($key)) {
+            $this->deleteFlash($key);
+        }
+
+        return $result;
+    }
+
+    public function put(string $key, $value): void
+    {
+        $_SESSION[$key] = $value;
+    }
+
+    public function push(string $key, $value): void
+    {
+        $_SESSION[$key][] = $value;
+    }
+
+    public function flash(string $key, $value): void
+    {
+        $this->put($key, $value);
+
+        if (! $this->checkFlash($key)) {
+            $this->push('flash' , $key);
+        }
+    }
+
+    public function pushFlash(string $key, $value): void
+    {
+        $this->push($key, $value);
+
+        if (! $this->checkFlash($key)) {
+            $this->push('flash' , $key);
+        }
+    }
+
+    private function checkFlash(string $key): bool
+    {
+        return isset($_SESSION['flash']) && in_array($key, $_SESSION['flash']);
+    }
+
+    private function deleteFlash(string $key): void
+    {
+        unset($_SESSION[$key]);
+        unset($_SESSION['flash'][array_search($key, $_SESSION['flash'])]);
     }
 }

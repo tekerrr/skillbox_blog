@@ -4,6 +4,7 @@ use App\Application;
 use App\Config;
 use App\Controller\Controller;
 use App\Http\Response;
+use App\Rest;
 use App\Router;
 
 
@@ -18,191 +19,101 @@ $views = Config::getInstance()->get('views');
 $router->setDefaultRedirectPath(PATH_DEFAULT);
 
 // Redirects
-$router->get(PATH_MAIN, function () {
-    return Response::redirect(PATH_DEFAULT);
-});
-
 $router->get('', function () {
     return Response::redirect(PATH_DEFAULT);
 });
 
 $router->get(PATH_ADMIN, function () {
-    return Response::redirect(PATH_ADMIN_LIST . '/articles/1');
+    return Response::redirect(PATH_ADMIN_LIST . '/articles');
 })->setAccessForLastRoute([ADMINS, AUTHORS], PATH_SIGN_IN);
 
-//
-// MAIN SITE
-//
+// Main Paths
 
-// Pages
-$router->get(PATH_MAIN . '/*', Controller\BasicPage::class . '@getMainPage');
-$router->get(PATH_ARTICLE . '/*', Controller\BasicPage::class . '@getArticle');
-$router->get(PATH_STATIC_PAGE . '/*', Controller\BasicPage::class . '@getStaticPage');
+$articleRest = new Rest('articles', Controller\ArticleController::class);
+$articleRest->setSameAccessFroRoutes(['create', 'store', 'edit', 'update', 'destroy'], [ADMINS, AUTHORS], '403');
+$router->setRest($articleRest);
+
+$staticPageRest = new Rest('static_pages', Controller\StaticPageController::class);
+$staticPageRest->except(['index']);
+$staticPageRest->setSameAccessFroRoutes(['create', 'store', 'edit', 'update', 'destroy'], [ADMINS, AUTHORS], '403');
+$router->setRest($staticPageRest);
+
+$commentRest = new Rest('comments', Controller\CommentController::class);
+$commentRest->only(['store', 'update', 'destroy']);
+$commentRest->setSameAccessFroRoutes(['update', 'destroy'], [ADMINS, AUTHORS], '403');
+$router->setRest($commentRest);
+
+$subscriberRest = new Rest('subscribers', Controller\SubscriberController::class);
+$subscriberRest->only(['store', 'destroy']);
+$subscriberRest->setAccessForRoute('destroy', [ADMINS, AUTHORS], '403');
+$router->setRest($subscriberRest);
+$router->get(PATH_UNSUBSCRIBE . '/*/*', Controller\SubscriberController::class . '@unsubscribe');
+
+$userRest = new Rest('users', Controller\UserController::class);
+$userRest->except(['index', 'show']);
+$userRest->setSameAccessFroRoutes(['create', 'store'], ['none']);
+$userRest->setSameAccessFroRoutes(['edit', 'update', 'destroy'], [ADMINS], '403');
+$router->setRest($userRest);
 
 $router
-    ->get(PATH_ACCOUNT, Controller\User::class . '@getAccountPage')
+    ->get(PATH_ACCOUNT, Controller\Account::class . '@edit')
     ->setAccessForLastRoute(['all'])
 ;
 $router
-    ->get(PATH_CHANGE_PASSWORD, Controller\User::class . '@getChangePasswordPage')
+    ->put(PATH_ACCOUNT, Controller\Account::class . '@update')
+    ->setAccessForLastRoute(['all'], '403')
+;
+$router
+    ->get(PATH_PASSWORD, Controller\Account::class . '@editPassword')
     ->setAccessForLastRoute(['all'])
 ;
 $router
-    ->get(PATH_SIGN_IN, Controller\User::class . '@getSignInPage')
+    ->put(PATH_PASSWORD, Controller\Account::class . '@updatePassword')
+    ->setAccessForLastRoute(['all'], '403')
+;
+$router
+    ->get(PATH_SIGN_IN, Controller\Account::class . '@showSignIn')
     ->setAccessForLastRoute(['none'])
 ;
-$router
-    ->get(PATH_SIGN_UP, Controller\User::class . '@getSignUpPage')
-    ->setAccessForLastRoute(['none'])
-;
-$router
-    ->post('submit_update_account', Controller\User::class . '@updateAccount')
-    ->setAccessForLastRoute(['all'], '403')
-;
+$router->post(PATH_SIGN_IN, Controller\Account::class . '@signIn');
+$router->get(PATH_SIGN_OUT, Controller\Account::class . '@signOut');
 
-
-// Actions
-$router->post('submit_new_comment', Controller\BasicPage::class . '@addComment');
-$router->post('submit_sign_in', Controller\User::class . '@signIn');
-$router->post('submit_sign_up', Controller\User::class . '@signUp');
-$router->get('sign_out', Controller\User::class . '@signOut');
-$router->post('submit_subscribe', Controller\Subscriber::class . '@subscribe');
-$router->get('unsubscribe/*/*', Controller\Subscriber::class . '@unsubscribe');
+// Admin Paths
 
 $router
-    ->post('submit_change_password', Controller\User::class . '@changePassword')
-    ->setAccessForLastRoute(['all'], '403')
-;
-$router
-    ->post('submit_upload_avatar', Controller\User::class . '@uploadAvatar')
-    ->setAccessForLastRoute(['all'], '403')
-;
-$router
-    ->get('delete_avatar', Controller\User::class . '@deleteAvatar')
-    ->setAccessForLastRoute(['all'], '403')
-;
-
-//
-// ADMIN SITE
-//
-
-// Pages
-$router
-    ->get(PATH_ADMIN_LIST . '/articles/*', Controller\Admin\BasicPage::class . '@getArticles')
+    ->get(PATH_ADMIN_LIST . PATH_ARTICLES, Controller\Admin::class . '@articles')
     ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_LIST . '/comments/*', Controller\Admin\BasicPage::class . '@getComments')
+    ->get(PATH_ADMIN_LIST . PATH_COMMENTS, Controller\Admin::class . '@comments')
     ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_LIST . '/static_pages/*', Controller\Admin\BasicPage::class . '@getStaticPages')
+    ->get(PATH_ADMIN_LIST . PATH_STATIC_PAGES, Controller\Admin::class . '@staticPages')
     ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_LIST . '/users/*', Controller\Admin\BasicPage::class . '@getUsers')
+    ->get(PATH_ADMIN_LIST . PATH_USERS, Controller\Admin::class . '@users')
     ->setAccessForLastRoute([ADMINS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_LIST . '/subscribers/*', Controller\Admin\BasicPage::class . '@getSubscribers')
+    ->get(PATH_ADMIN_LIST . PATH_SUBSCRIBERS, Controller\Admin::class . '@subscribers')
     ->setAccessForLastRoute([ADMINS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_VIEW . '/static_page/*', function ($id) {
-        return (new Controller\BasicPage)->getStaticPage($id, false);
-    })
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_VIEW . '/article/*', function ($id) {
-        return (new Controller\BasicPage)->getArticle($id, false);
-    })
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_ADD . '/article', Controller\Admin\Content::class . '@getAddArticlePage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_ADD . '/static_page', Controller\Admin\Content::class . '@getAddStaticPagePage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_EDIT . '/article/*', Controller\Admin\Content::class . '@getAddArticlePage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_EDIT . '/static_page/*', Controller\Admin\Content::class . '@getAddStaticPagePage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->get(PATH_ADMIN_EDIT . '/user/*', Controller\Admin\Admin::class . '@getEditUserPage')
+    ->get(PATH_ADMIN_SETTINGS, Controller\Admin::class . '@editSettings')
     ->setAccessForLastRoute([ADMINS], '403')
 ;
 $router
-    ->get(PATH_ADMIN_SETTINGS, Controller\Admin\Admin::class . '@getSettingsPage')
-    ->setAccessForLastRoute([ADMINS], '403')
-;
-
-
-// Actions
-$router
-    ->post('submit_items_per_page', Controller\Admin\BasicPage::class . '@setItemsPerPage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_add_article', Controller\Admin\Content::class . '@addArticle')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_edit_article', Controller\Admin\Content::class . '@editArticle')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_add_static_page', Controller\Admin\Content::class . '@addStaticPage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_edit_static_page', Controller\Admin\Content::class . '@editStaticPage')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_publish', Controller\Admin\Content::class . '@activate')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_publish_article_and_notify', Controller\Admin\Content::class . '@publishArticleAndNotify')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_unpublish', Controller\Admin\Content::class . '@deactivate')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_delete', Controller\Admin\Content::class . '@delete')
-    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
-;
-$router
-    ->post('submit_edit_user', Controller\Admin\Admin::class . '@editUser')
+    ->put(PATH_ADMIN_SETTINGS, Controller\Admin::class . '@updateSettings')
     ->setAccessForLastRoute([ADMINS], '403')
 ;
 $router
-    ->post('submit_edit_user_group', Controller\Admin\Admin::class . '@editUserGroup')
-    ->setAccessForLastRoute([ADMINS], '403')
-;
-$router
-    ->post('submit_upload_avatar_for_user', Controller\Admin\Admin::class . '@uploadAvatarForUser')
-    ->setAccessForLastRoute([ADMINS], '403')
-;
-$router
-    ->get('delete_avatar_for_user/*', Controller\Admin\Admin::class . '@deleteAvatarForUser')
-    ->setAccessForLastRoute([ADMINS], '403')
-;
-$router
-    ->post('submit_edit_settings', Controller\Admin\Admin::class . '@editSettings')
-    ->setAccessForLastRoute([ADMINS], '403')
+    ->put('items_per_page', Controller\Admin::class . '@updateItemsPerPage')
+    ->setAccessForLastRoute([ADMINS, AUTHORS], '403')
 ;
 
 $application = new Application($router);
 
 $application->run();
+

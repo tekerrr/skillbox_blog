@@ -1,22 +1,18 @@
-<?php
-$addGet = isset($paginatorItemsPerPage) ? '&items=' . $paginatorItemsPerPage : '';
-?>
-
 <nav aria-label="Page navigation">
-    <ul class="pagination">
+    <ul class="pagination my-3">
 
         <li class="page-item">
-            <a class="page-link rounded-0" href="?<?=$paginator->getPath()?>/1<?=$addGet?>">&laquo;</a>
+            <a class="page-link rounded-0" href="<?=$paginator->getFirstPagePath()?>">&laquo;</a>
         </li>
 
-        <?php foreach ($paginator->getPages() as $page): ?>
-            <li class="page-item <?=$page == $paginator->getCurrentPage() ? 'active' : ''?>">
-                <a class="page-link rounded-0" href="?<?=$paginator->getPath()?>/<?=$page . $addGet?>"><?=$page?></a>
+        <?php foreach ($paginator->getPagesPath() as $path): ?>
+            <li class="page-item <?=$path['page'] == $paginator->getCurrentPage() ? 'active' : ''?>">
+                <a class="page-link rounded-0" href="<?=$path['path']?>"><?=$path['page']?></a>
             </li>
         <?php endforeach; ?>
 
         <li class="page-item">
-            <a class="page-link rounded-0" href="?<?=$paginator->getPath()?>/<?=$paginator->getLastPage() . $addGet?>">&raquo;</a>
+            <a class="page-link rounded-0" href="<?=$paginator->getLastPagePath()?>">&raquo;</a>
         </li>
 
     </ul>

@@ -26,12 +26,11 @@ class Auth // Singleton
 
     public function run(): void
     {
-        Session::start();
+        ($session = new Session())->start();
         if ($this->isAuthorized()) {
             $this->setCookies();
         } else {
             $this->cleanCookies();
-            Session::clean();
         }
     }
 
@@ -44,7 +43,7 @@ class Auth // Singleton
 
     public function get(string $request)
     {
-        return Session::get($request);
+        return (new Session())->get($request);
     }
 
     public function getUser(): ?User
@@ -63,7 +62,7 @@ class Auth // Singleton
 
     public function checkGroups(array $groups): bool
     {
-        if (is_array($usersGroups = Session::get('user.groups'))) {
+        if (is_array($usersGroups = (new Session())->get('user.groups'))) {
             foreach ($usersGroups as $userGroup) {
                 if (in_array($userGroup, $groups)) {
                     return true;
@@ -76,28 +75,28 @@ class Auth // Singleton
 
     public function signIn(User $user): void
     {
-        Session::update($user);
+        (new Session())->updateUser($user);
         $this->setCookies();
     }
 
     public function signOut(): void
     {
-        Session::destroy();
+        (new Session())->destroy();
         $this->cleanCookies();
     }
 
     private function isAuthorized(): bool
     {
-        return (($email = Session::get('user.email')) && ($email2 = Cookies::get('email')) && $email === $email2);
+        return (($email = (new Session())->get('user.email')) && ($email2 = (new Cookies())->get('email')) && $email === $email2);
     }
 
     private function setCookies(): void
     {
-        Cookies::set('email', $this->get('user.email'));
+        (new Cookies())->set('email', $this->get('user.email'));
     }
 
     private function cleanCookies(): void
     {
-        Cookies::clean(['email']);
+        (new Cookies())->clean(['email']);
     }
 }

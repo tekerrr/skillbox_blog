@@ -26,7 +26,7 @@ class StaticPage extends AbstractModel
         ]);
     }
 
-    public function edit(string $title, string $text): void
+    public function update(string $title, string $text): void
     {
         $this->title = $title;
         $this->text = $text;

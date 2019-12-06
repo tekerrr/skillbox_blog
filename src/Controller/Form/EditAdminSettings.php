@@ -5,8 +5,8 @@ namespace App\Controller\Form;
 
 
 use App\Controller\Form;
-use App\Validation\Form\ChainOfResponsibility\EmptyField;
-use App\Validation\Form\ChainOfResponsibility\NaturalNumber;
+use App\Validation\Rules\EmptyField;
+use App\Validation\Rules\NaturalNumber;
 
 class EditAdminSettings extends Form
 {

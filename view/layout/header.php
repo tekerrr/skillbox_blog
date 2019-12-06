@@ -1,6 +1,6 @@
 <?php
 
-include VIEW_LAYOUT_BASE_DIR . 'header.php';
+include VIEW_LAYOUT_BASE_DIR . '/header.php';
 
 use App\Config;
 use App\Controller\Auth;
@@ -14,7 +14,7 @@ $articlesPerHeader = Config::getInstance()->get('admin_settings.articles_per_hea
 <body>
 <header class="navbar sticky-top navbar-expand-md navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="?<?=PATH_DEFAULT?>">
+        <a class="navbar-brand" href="<?=PATH_DEFAULT?>">
             <img src="/img/ico.png" class="d-inline-block align-top" alt="icon">
             MyBlog
         </a>
@@ -29,27 +29,27 @@ $articlesPerHeader = Config::getInstance()->get('admin_settings.articles_per_hea
 
                 <li>
                     <a class="nav-item nav-link <?=Router::isActivePath(PATH_MAIN)?>"
-                       href="?<?=PATH_DEFAULT?>">Главная</a>
+                       href="<?=PATH_MAIN?>">Главная</a>
                 </li>
 
                 <li class="dropdown">
-                    <a class="nav-link dropdown-toggle <?=Router::isActivePath(PATH_ARTICLE)?>"
+                    <a class="nav-link dropdown-toggle <?=Router::isActivePath(PATH_ARTICLES . '/*')?>"
                        href="" data-toggle="dropdown">Статьи</a>
                     <div class="dropdown-menu">
                         <?php foreach (Article::lastArticlesWithIdAndTitle($articlesPerHeader) as $lastArticle): ?>
-                            <a class="dropdown-item" href="?<?=PATH_ARTICLE?>/<?=$lastArticle->id?>">
+                            <a class="dropdown-item" href="<?=PATH_ARTICLES?>/<?=$lastArticle->id?>">
                                 <?=$lastArticle->title?>
                             </a>
                         <?php endforeach; ?>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="?<?=PATH_DEFAULT?>">Все</a>
+                        <a class="dropdown-item" href="<?=PATH_DEFAULT?>">Все</a>
                     </div>
                 </li>
 
                 <?php foreach (StaticPage::activePagesWithIdAndTitle() as $staticPageForHeader): ?>
                     <li>
-                        <a class="nav-item nav-link  <?=Router::isActivePath(PATH_STATIC_PAGE . '/' . $staticPageForHeader->id)?>"
-                           href="?<?=PATH_STATIC_PAGE?>/<?=$staticPageForHeader->id?>">
+                        <a class="nav-item nav-link  <?=Router::isActivePath(PATH_STATIC_PAGES . '/' . $staticPageForHeader->id)?>"
+                           href="<?=PATH_STATIC_PAGES?>/<?=$staticPageForHeader->id?>">
                             <?=$staticPageForHeader->title?>
                         </a>
                     </li>
@@ -62,21 +62,23 @@ $articlesPerHeader = Config::getInstance()->get('admin_settings.articles_per_hea
                             <?=$userName?>
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="?<?=PATH_ACCOUNT?>">Профиль</a>
+                            <a class="dropdown-item" href="<?=PATH_ACCOUNT?>">Профиль</a>
                             <div class="dropdown-divider"></div>
                             <?php if (Auth::getInstance()->isPriorityUser()): ?>
-                                <a class="dropdown-item" href="?<?=PATH_ADMIN?>">Админка</a>
+                                <a class="dropdown-item" href="<?=PATH_ADMIN?>">Админка</a>
                                 <div class="dropdown-divider"></div>
                             <?php endif; ?>
-                            <a class="dropdown-item" href="?sign_out&from=<?=Router::getCurrentPath() ?? ''?>">Выйти</a>
+                            <a class="dropdown-item" href="<?=PATH_SIGN_OUT?>?from=<?=Router::getCurrentPath() ?? ''?>">Выйти</a>
                         </div>
                     </li>
                 <?php else: ?>
-                    <a class="btn btn-success rounded-0 ml-3" href="?<?=PATH_SIGN_IN?>">Войти</a>
+                    <a class="btn btn-success rounded-0 ml-3" href="<?=PATH_SIGN_IN?>">Войти</a>
                 <?php endif; ?>
 
             </ul>
         </div>
 
     </div>
+
 </header>
+<?php include VIEW_TEMPLATE . '/flash_messages.php'?>

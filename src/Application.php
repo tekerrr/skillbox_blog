@@ -22,7 +22,8 @@ class Application
 
         $cfg = \ActiveRecord\Config::instance();
         $cfg->set_model_directory(MODEL_DIR);
-        $cfg->set_connections(['development' => sprintf('mysql://%1$s:%2$s@%3$s/%4$s',
+        $cfg->set_connections(['development' => sprintf(
+            'mysql://%1$s:%2$s@%3$s/%4$s',
             $db['user'],
             $db['password'],
             $db['host'],

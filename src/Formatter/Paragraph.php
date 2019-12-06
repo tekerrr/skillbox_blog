@@ -6,18 +6,18 @@ namespace App\Formatter;
 
 class Paragraph
 {
-    public function format(string $text): string
+    public function format(string $string): string
     {
-        $text = trim($text);
+        $string = trim($string);
 
-       if (strpos($text, '<p>') !== 0) {
-            $text = '<p>' . $text;
+       if (strpos($string, '<p>') !== 0) {
+            $string = '<p>' . $string;
         }
 
-        if (strpos($text, '</p>') !== (strlen($text) - strlen('</p>'))) {
-            $text = $text . '</p>';
+        if (strpos($string, '</p>') !== (strlen($string) - strlen('</p>'))) {
+            $string = $string . '</p>';
         }
 
-        return str_replace(PHP_EOL, '<p>' . PHP_EOL . '<p>', $text);
+        return str_replace(PHP_EOL, '<p>' . PHP_EOL . '<p>', $string);
     }
 }

@@ -1,5 +1,5 @@
-<?php if ($validStatus == 'is-invalid'): ?>
+<?php if (isset($fields[$inputName]['status']) && $fields[$inputName]['status'] == 'is-invalid'): ?>
     <div class="invalid-feedback">
-        <?=$message[$inputName] ?? 'Ошибка при заполнении поля'?>
+        <?=$fields[$inputName]['message'] ?? 'Ошибка при заполнении поля'?>
     </div>
 <?php endif; ?>

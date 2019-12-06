@@ -5,10 +5,10 @@ namespace App\Controller\Form;
 
 
 use App\Controller\Form;
-use App\Validation\Form\ChainOfResponsibility\EmptyField;
-use App\Validation\Form\ChainOfResponsibility\Length;
-use App\Validation\Form\ChainOfResponsibility\UniqueFieldContent;
-use App\Validation\Form\ChainOfResponsibility\ValidEmail;
+use App\Validation\Rules\EmptyField;
+use App\Validation\Rules\Length;
+use App\Validation\Rules\UniqueFieldContent;
+use App\Validation\Rules\ValidEmail;
 
 class EditUser extends Form
 {

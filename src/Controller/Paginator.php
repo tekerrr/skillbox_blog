@@ -4,9 +4,12 @@
 namespace App\Controller;
 
 
+use App\Http\Request;
+
 class Paginator
 {
-    private $path;
+    /** @var Request */
+    private $request;
     private $pages = [];
     private $currentPage;
     private $lastPage;
@@ -16,6 +19,7 @@ class Paginator
         $this->currentPage = $currentPage;
         $this->lastPage = ceil($maxItems / $itemsPerPage) ?: 1;
         $this->setPages();
+        $this->request = new Request();
     }
 
     public function isNeeded(): bool
@@ -28,9 +32,31 @@ class Paginator
         return $this->currentPage;
     }
 
-    public function getPages(): array
+    public function getFirstPagePath(): string
     {
-        return $this->pages;
+        return $this->request->unsetGet('page')->getPath();
+    }
+
+    public function getLastPagePath(): string
+    {
+        return $this->request->setGet('page', $this->getLastPage())->getPath();
+    }
+
+    public function getPagesPath(): array
+    {
+        $paths = [];
+
+        foreach ($this->pages as $page) {
+            $paths[] = [
+                'page' => $page,
+                'path' => $page == 1
+                    ? $this->getFirstPagePath()
+                    : $this->request->setGet('page', $page)->getPath()
+                ,
+            ];
+        }
+
+        return $paths;
     }
 
     public function getLastPage(): int
@@ -43,15 +69,5 @@ class Paginator
         $startPage = ($this->currentPage - 2) >= 1 ? ($this->currentPage - 2) : 1;
         $endPage = ($this->currentPage + 2) <= $this->lastPage ? ($this->currentPage + 2) : $this->lastPage;
         $this->pages = range($startPage, $endPage);
-    }
-
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    public function setPath(string $path): void
-    {
-        $this->path = $path;
     }
 }

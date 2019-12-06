@@ -5,56 +5,38 @@ namespace App\Controller\Controller;
 
 
 use App\Controller\Form;
+use App\Controller\Session;
 
 abstract class AbstractController
 {
-    private $additionalConfig = [];
-
-    protected function setAdditionalConfig(array $config): void
-    {
-        $this->additionalConfig = $config;
-    }
-
-    protected function getAdditionalConfig(): array
-    {
-        return $this->additionalConfig;
-    }
-
-    protected function getFormConfig(Form $form): array
-    {
-        return [
-            'status'    => $form->getFieldValidStatuses(),
-            'message'   => $form->getFieldErrorMessages(),
-        ];
-    }
-
-    protected function checkForm(Form $form, AbstractController $controller): bool
+    protected function checkForm(Form $form): bool
     {
         if ($form->check()) {
             return true;
         }
 
-        $controller->setAdditionalConfig($this->getFormConfig($form));
+        $this->saveFieldsForFlashSession($form->getFields());
         return false;
     }
 
-    protected function getFieldValues(array $keys, array $loadedValues = []): array
+    protected function getFields(array $loadedValues = []): array
+    {
+        return (new Session())->get('fields', []) ?: $this->getFieldLoadedValues($loadedValues);
+    }
+
+    protected function getFieldLoadedValues(array $loadedValues): array
     {
         $fieldValues = [];
 
-        foreach ($keys as $key) {
-            $fieldValues[$key] = $this->getHtmlSavePost($key) ?? $loadedValues[$key] ?? '';
+        foreach ($loadedValues as $key => $value) {
+            $fieldValues[$key]['value'] = $value;
         }
 
         return $fieldValues;
     }
 
-    protected function getHtmlSavePost(string $key): ?string
+    protected function saveFieldsForFlashSession(array $fields): void
     {
-        if (isset($_POST[$key])) {
-            return htmlentities($_POST[$key]);
-        }
-
-        return null;
+        (new Session())->flash('fields', $fields);
     }
 }

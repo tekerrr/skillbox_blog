@@ -5,6 +5,7 @@ namespace App;
 
 
 use App\Controller\Controller;
+use App\Formatter\Path;
 
 class Route
 {
@@ -28,6 +29,11 @@ class Route
         $this->callback = $callback;
     }
 
+    public static function getMatchExpression(string $path): string
+    {
+        return '/^' . str_replace(['*', '/'], ['\w+', '\/'], $path) . '$/';
+    }
+
     public function setAccess(array $groups, string $redirectPath): void
     {
         $this->access = new Access($groups, $redirectPath);
@@ -48,12 +54,12 @@ class Route
      */
     public function match(string $method, string $uri): bool
     {
-        return ($method == $this->method) && preg_match($this->getMatchExpression(), $this->preparePath($uri));
+        return ($method == $this->method) && preg_match($this->getMatchExpression($this->getPath()), $this->preparePath($uri));
     }
 
     /**
      * @param $uri
-     * @return Renderable
+     * @return Renderable|string|mixed
      * @throws \Exception
      */
     public function run($uri)
@@ -84,7 +90,7 @@ class Route
      */
     private function preparePath(string $path): string
     {
-        return '/' . trim($path, ' /');
+        return (new Path())->format($path);
     }
 
     /**
@@ -138,11 +144,6 @@ class Route
         }
 
         return $params;
-    }
-
-    private function getMatchExpression(): string
-    {
-        return '/^' . str_replace(['*', '/'], ['\w+', '\/'], $this->getPath()) . '$/';
     }
 
 }

@@ -5,6 +5,8 @@ namespace App;
 
 
 use App\Controller\Auth;
+use App\Http\ForbiddenResponse;
+use App\Http\NotFoundResponse;
 use App\Http\Response;
 
 class Access
@@ -37,9 +39,9 @@ class Access
     {
         switch ($this->redirectPath) {
             case '403':
-                return Response::forbidden();
+                return new ForbiddenResponse();
             case '404':
-                return Response::notFound();
+                return new NotFoundResponse();
             default:
                 return Response::redirect($this->redirectPath);
         }

@@ -1,20 +1,16 @@
-<?php use App\Router; ?>
-
-<?php if (Router::isActivePath(PATH_ADMIN_VIEW . '/article')): ?>
+<?php if ($preview): ?>
     <div class="row mx-0 justify-content-end">
 
         <form method="post">
-            <input type="hidden" name="type" value="comment">
-            <input type="hidden" name="id" value="<?=$comment['id']?>">
-            <div class="btn-group ml-auto">
-                <?php if ($comment['active']): ?>
-                    <input type="submit" class="btn btn-outline-primary rounded-0"
-                           name="submit_unpublish" value="Снять с публикации">
-                <?php else: ?>
-                    <input type="submit" class="btn btn-outline-primary rounded-0"
-                           name="submit_publish" value="Опубликовать">
-                <?php endif;?>
-            </div>
+            <input type="hidden" name="_method" value="PUT">
+            <input type="hidden" name="_active" value="<?=$comment['active'] ? 'false' : 'true'?>">
+            <?php if ($comment['active']): ?>
+                <input type="submit" class="btn btn-outline-primary rounded-0"
+                       name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Снять с публикации">
+            <?php else: ?>
+                <input type="submit" class="btn btn-outline-primary rounded-0"
+                       name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Опубликовать">
+            <?php endif;?>
         </form>
 
         <button  class="btn btn-outline-danger rounded-0 ml-3" data-toggle="modal" data-target="#deleteModal<?=$comment['id']?>">Удалить</button>
@@ -34,9 +30,8 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Закрыть</button>
                         <form method="post">
-                            <input type="hidden" name="type" value="comment">
-                            <input type="hidden" name="id" value="<?=$comment['id']?>">
-                            <input type="submit" class="btn btn-danger rounded-0 ml-3" name="submit_delete" value="Удалить">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="submit" class="btn btn-danger rounded-0 ml-3" name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Удалить">
                         </form>
                     </div>
                 </div>

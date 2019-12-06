@@ -1,18 +1,18 @@
 <?php
 
-include VIEW_LAYOUT_DIR . 'admin_header.php';
+include VIEW_HEADER_ADMIN;
 
 ?>
 
-<div class="container pt-4">
+<div class="container">
     <div class="row justify-content-center my-3">
         <h1><?=$title?></h1>
     </div>
 
     <div class="row pt-3 ml-0 align-items-start">
-        <a class="btn btn-outline-primary rounded-0" href="?<?=PATH_ADMIN_ADD . '/' . $itemType?>">Создать</a>
+        <a class="btn btn-outline-primary rounded-0" href="<?=PATH_STATIC_PAGES . '/create'?>">Создать</a>
 
-        <?php include VIEW_TEMPLATE . 'items_per_page_selector.php' ?>
+        <?php include VIEW_TEMPLATE . '/items_per_page_selector.php' ?>
     </div>
 
     <div class="row py-3 border-bottom ml-0">
@@ -32,19 +32,19 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
                     <text class ="<?=$item['active'] ? '' : 'text-danger font-weight-bold'?>">
                         <?=$item['active'] ? 'Активна' : 'Не активна'?>
                     </text>
-                    <input type="hidden" name="type" value="<?=$itemType?>">
-                    <input type="hidden" name="id" value="<?=$item['id']?>">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="_active" value="<?=$item['active'] ? 'false' : 'true'?>">
                     <input type="submit" class="btn btn-outline-primary rounded-0 btn-sm  ml-1"
-                           name="<?=$item['active'] ? 'submit_unpublish' : 'submit_publish' ?>" value="Изменить">
+                           name="<?=PATH_STATIC_PAGES?>/<?=$item['id']?>" value="Сменить">
                 </form>
             </div>
 
             <div class="btn-group ml-auto">
 
                 <a class="btn btn-outline-primary rounded-0 btn-sm"
-                   href="?<?=PATH_ADMIN_VIEW . '/' . $itemType?>/<?=$item['id']?>">Просмотр</a>
+                   href="<?=PATH_STATIC_PAGES?>/<?=$item['id']?>?preview">Просмотр</a>
                 <a class="btn btn-outline-primary rounded-0 btn-sm"
-                   href="?<?=PATH_ADMIN_EDIT . '/' . $itemType?>/<?=$item['id']?>">Изменить</a>
+                   href="<?=PATH_STATIC_PAGES?>/<?=$item['id']?>/edit">Изменить</a>
 
                 <button  class="btn btn-outline-danger rounded-0 btn-sm" data-toggle="modal" data-target="#deleteModal<?=$item['id']?>">Удалить</button>
                 <!-- Modal-->
@@ -63,11 +63,9 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Отмена</button>
                                 <form method="post">
-                                    <input type="hidden" name="type" value="<?=$itemType?>">
-                                    <input type="hidden" name="id" value="<?=$item['id']?>">
-                                    <input type="submit" class="btn btn-danger rounded-0 ml-3" name="submit_delete" value="Удалить">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="submit" class="btn btn-danger rounded-0 ml-3" name="<?=PATH_STATIC_PAGES?>/<?=$item['id']?>" value="Удалить">
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -79,12 +77,12 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
     <?php endforeach; ?>
 
     <div class="row py-3 ml-0">
-        <a class="btn btn-outline-primary rounded-0" href="?<?=PATH_ADMIN_ADD . '/' . $itemType?>">Создать</a>
+        <a class="btn btn-outline-primary rounded-0" href="<?=PATH_STATIC_PAGES . '/create'?>">Создать</a>
     </div>
 
     <!--Paginator-->
     <?php if ($paginator->isNeeded()):
-        include VIEW_TEMPLATE . 'paginator.php';
+        include VIEW_TEMPLATE . '/paginator.php';
     endif; ?>
 
 
@@ -92,6 +90,6 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
 
 <?php
 
-include VIEW_LAYOUT_DIR . 'admin_footer.php';
+include VIEW_FOOTER_ADMIN;
 
 ?>

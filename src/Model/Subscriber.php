@@ -6,7 +6,7 @@ namespace App\Model;
 
 use App\View\Email;
 
-class Subscriber extends AbstractModel
+class Subscriber extends AbstractModel implements Recipient
 {
     use CanBeListed;
 
@@ -34,31 +34,13 @@ class Subscriber extends AbstractModel
         return false;
     }
 
-    public static function notifyAll(Article $article): void
+    public function getAddress(): string
     {
-        if ($subscribers = self::all(['conditions' => ['active' => true]])) {
-            /** @var self $subscriber */
-            foreach ($subscribers as $subscriber) {
-                $subscriber->notify($article);
-            }
-        }
+        return $this->email;
     }
 
     private static function generateHash(): string
     {
         return rtrim(base64_encode(md5(microtime())), "=");
-    }
-
-    private function notify(Article $article): void
-    {
-        $sub = $this->attributes();
-        $article = $article->attributes();
-
-        $email = new Email('new_article', [
-            'sub' => $sub,
-            'article' => $article,
-        ]);
-
-        file_put_contents(APP_DIR . '/logs/email.txt', $email->render(), FILE_APPEND);
     }
 }

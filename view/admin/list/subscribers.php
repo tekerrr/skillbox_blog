@@ -1,16 +1,16 @@
 <?php
 
-include VIEW_LAYOUT_DIR . 'admin_header.php';
+include VIEW_HEADER_ADMIN;
 
 ?>
 
-<div class="container pt-4">
+<div class="container">
     <div class="row justify-content-center my-3">
         <h1><?=$title?></h1>
     </div>
 
     <div class="row pt-3 ml-0 align-items-start">
-        <?php include VIEW_TEMPLATE . 'items_per_page_selector.php' ?>
+        <?php include VIEW_TEMPLATE . '/items_per_page_selector.php' ?>
     </div>
 
     <div class="row py-3 border-bottom ml-0">
@@ -44,11 +44,9 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Отмена</button>
                                 <form method="post">
-                                    <input type="hidden" name="type" value="<?=$itemType?>">
-                                    <input type="hidden" name="id" value="<?=$item['id']?>">
-                                    <input type="submit" class="btn btn-danger rounded-0 ml-3" name="submit_delete" value="Удалить">
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="submit" class="btn btn-danger rounded-0 ml-3" name="<?=PATH_SUBSCRIBERS?>/<?=$item['id']?>" value="Удалить">
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -61,7 +59,7 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
 
     <!--Paginator-->
     <?php if ($paginator->isNeeded()):
-        include VIEW_TEMPLATE . 'paginator.php';
+        include VIEW_TEMPLATE . '/paginator.php';
     endif; ?>
 
 
@@ -69,6 +67,6 @@ include VIEW_LAYOUT_DIR . 'admin_header.php';
 
 <?php
 
-include VIEW_LAYOUT_DIR . 'admin_footer.php';
+include VIEW_FOOTER_ADMIN;
 
 ?>

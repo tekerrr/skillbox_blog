@@ -4,13 +4,14 @@
 namespace App\Http\Exception;
 
 
-use App\Http\Response;
+use App\Http\Exception;
+use App\Http\NotFoundResponse as NotFoundResponse    ;
 use App\Renderable;
 
-class NotFound extends \App\Http\Exception implements Renderable
+class NotFound extends Exception implements Renderable
 {
     public function render()
     {
-        Response::notFound()->render();
+        (new NotFoundResponse())->render();
     }
 }

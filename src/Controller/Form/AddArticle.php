@@ -4,7 +4,7 @@
 namespace App\Controller\Form;
 
 
-use App\Validation\Form\ChainOfResponsibility\EmptyFile;
+use App\Validation\Rules\EmptyFile;
 
 class AddArticle extends EditArticle
 {

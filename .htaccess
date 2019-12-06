@@ -1,0 +1,18 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+#Don't favicon!
+#RewriteCond %{REQUEST_FILENAME} !^img\favicon\.ico
+
+# Условие: (не) является ли полный путь путём к существующему каталогу
+RewriteCond %{REQUEST_FILENAME} !-d
+# Условие: (не) является ли полный путь путём к существующему файлу
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Перенапряляет на index.php с GET-запросом
+# [L] - Last - дальнейшие правила не сработают
+RewriteRule (.*) index.php?path=$1 [QSA,L]
+
+# Перенапряляет на index.php
+# [L] - Last - дальнейшие правила не сработают
+#RewriteRule (.*) index.php [L]

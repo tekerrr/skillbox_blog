@@ -4,27 +4,32 @@
 namespace App\Controller;
 
 
-use App\Validation\Form\Checkable;
+use App\Validation\Checkable;
 
 class  Form
 {
     private $checkableItems = [];
-
-    private $fieldValidStatuses = [];
-    private $fieldErrorMessages = [];
+    private $fields = [];
 
     public function check(): bool
     {
         $success = true;
+        $fields = $this->getFieldValuesFromPost();
 
         foreach ($this->checkableItems as $item) {
+            $name = $item->getFieldName();
+
             if (! $result = $item->check()) {
-                $this->setFieldErrorMessage($item);
+                $fields[$name]['message'] = $fields[$name]['message'] ?? $item->getErrorMessage();
                 $success = false;
             }
 
-            $this->setFieldValidStatus($item, $result);
+            if (empty($fields[$name]['status']) || $fields[$name]['status'] == 'is-valid') {
+                $fields[$name]['status'] = $result ? 'is-valid' : 'is-invalid';
+            }
         }
+
+        $this->fields = $fields;
 
         return $success;
     }
@@ -43,30 +48,19 @@ class  Form
         }
     }
 
-    public function getFieldValidStatuses(): array
+    private function getFieldValuesFromPost(): array
     {
-        return $this->fieldValidStatuses;
-    }
+        $fieldValues = [];
 
-    public function getFieldErrorMessages(): array
-    {
-        return $this->fieldErrorMessages;
-    }
-
-    private function setFieldValidStatus(Checkable $checkable, $result): void
-    {
-        $fieldName = $checkable->getFieldName();
-
-        if (isset($this->fieldValidStatuses[$fieldName]) && $this->fieldValidStatuses[$fieldName] == 'is-invalid') {
-            return;
+        foreach ($_POST as $name => $value) {
+            $fieldValues[$name]['value'] = htmlentities($_POST[$name] ?? '');
         }
 
-        $this->fieldValidStatuses[$fieldName] = $result ? 'is-valid' : 'is-invalid';
+        return $fieldValues;
     }
 
-    private function setFieldErrorMessage(Checkable $checkable): void
+    public function getFields(): array
     {
-        $this->fieldErrorMessages[$checkable->getFieldName()] =
-            $this->fieldErrorMessages[$checkable->getFieldName()] ?? $checkable->getErrorMessage();
+        return $this->fields;
     }
 }

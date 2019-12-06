@@ -12,7 +12,7 @@ final class Config // Singleton
 
     private function __construct()
     {
-        foreach (glob(CONFIG_DIR . '*.php') as $path) {
+        foreach (glob(CONFIG_DIR . '/*.php') as $path) {
             $this->configs[pathinfo($path, PATHINFO_FILENAME)] = require($path);
         }
     }
@@ -46,6 +46,6 @@ final class Config // Singleton
 
         $content = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($config, true) . ';' . PHP_EOL;
 
-        file_put_contents(CONFIG_DIR . $array[0] . '.php', $content);
+        file_put_contents(CONFIG_DIR . '/' . $array[0] . '.php', $content);
     }
 }

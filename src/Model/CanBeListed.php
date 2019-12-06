@@ -32,20 +32,9 @@ trait CanBeListed
         return static::first(['conditions' => $conditions]);
     }
 
-    public function isActive(): bool
+    public function setActive(bool $active): void
     {
-        return (bool) $this->active;
-    }
-
-    public function activate(): void
-    {
-        $this->active = true;
-        $this->save();
-    }
-
-    public function deactivate(): void
-    {
-        $this->active = false;
+        $this->active = $active;
         $this->save();
     }
 }

@@ -43,7 +43,7 @@ class Article extends AbstractModel implements HasImage
         ]) ?? [];
     }
 
-    public function edit(string $title, string $abstract, string $text): void
+    public function update(string $title, string $abstract, string $text): void
     {
         $this->title = $title;
         $this->abstract = $abstract;

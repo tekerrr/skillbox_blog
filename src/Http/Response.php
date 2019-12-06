@@ -4,43 +4,30 @@
 namespace App\Http;
 
 
+use App\Formatter\Path;
 use App\Renderable;
 use App\View\View;
 
 class Response implements Renderable
 {
-    private $code;
-    private $redirect = '';
+    protected $code;
+    protected $redirect = '';
 
     /*** @var Renderable */
-    private $view;
+    protected $view;
 
-
-    public static function notFound(): Renderable
-    {
-        $response = new self();
-        $response->code = 404;
-        $response->view = new View('404', ['title' => 'Ошибка 404']);
-
-        return $response;
-    }
-
-    public static function forbidden(): Renderable
-    {
-        $response = new self();
-        $response->code = 403;
-        $response->view = new View('403', ['title' => 'Ошибка 403']);
-
-        return $response;
-    }
-
-    public static function redirect(string $path = '')
+    public static function redirect(string $path = ''): Renderable
     {
         $response = new self();
         $response->code = 303;
-        $response->redirect = $path;
+        $response->redirect = (new Path())->format($path);
 
         return $response;
+    }
+
+    public static function redirectBack(): Renderable
+    {
+        return self::redirect(Request::getRequestUri());
     }
 
     public function render()
@@ -52,7 +39,7 @@ class Response implements Renderable
         if ($this->view instanceof Renderable) {
             $this->view->render();
         } else {
-            header('Location: /?' . $this->redirect);
+            header('Location: ' . $this->redirect);
         }
     }
 }
