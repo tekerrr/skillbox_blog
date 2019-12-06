@@ -10,7 +10,7 @@ class VenueCB extends ActiveRecord\Model
 	static $after_destroy = array('after_destroy_one', 'after_destroy_two');
 	static $after_create;
 
-	// DO NOT add a static $after_construct for this. we are testing
+	// DO NOT edit a static $after_construct for this. we are testing
 	// auto registration of callback with this
 	public function after_construct() {}
 

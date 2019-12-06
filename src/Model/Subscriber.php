@@ -4,6 +4,8 @@
 namespace App\Model;
 
 
+use App\View\Email;
+
 class Subscriber extends AbstractModel
 {
     use CanBeListed;
@@ -35,6 +37,7 @@ class Subscriber extends AbstractModel
     public static function notifyAll(Article $article): void
     {
         if ($subscribers = self::all(['conditions' => ['active' => true]])) {
+            /** @var self $subscriber */
             foreach ($subscribers as $subscriber) {
                 $subscriber->notify($article);
             }
@@ -50,8 +53,12 @@ class Subscriber extends AbstractModel
     {
         $sub = $this->attributes();
         $article = $article->attributes();
-        $email = include VIEW_EMAILS . 'new_article.php';
 
-        file_put_contents(APP_DIR . '/logs/email.txt', $email, FILE_APPEND);
+        $email = new Email('new_article', [
+            'sub' => $sub,
+            'article' => $article,
+        ]);
+
+        file_put_contents(APP_DIR . '/logs/email.txt', $email->render(), FILE_APPEND);
     }
 }

@@ -21,7 +21,7 @@ class StaticPage extends AbstractModel
     {
         return self::create([
             'title'         => $title,
-            'text'          => (new Formatter\Paragraph())->format($text),
+            'text'          => $text,
             'active'        => false,
         ]);
     }
@@ -29,7 +29,7 @@ class StaticPage extends AbstractModel
     public function edit(string $title, string $text): void
     {
         $this->title = $title;
-        $this->text = (new Formatter\Paragraph())->format($text);
+        $this->text = $text;
         $this->save();
     }
 }

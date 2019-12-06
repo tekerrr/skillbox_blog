@@ -47,6 +47,6 @@ define('PATH_ADMIN_PREFIX', 'admin/');
 define('PATH_ADMIN_SETTINGS', PATH_ADMIN_PREFIX . 'settings');
 define('PATH_ADMIN_LIST', PATH_ADMIN_PREFIX . 'list');
 define('PATH_ADMIN_VIEW', PATH_ADMIN_PREFIX . 'view');
-define('PATH_ADMIN_ADD', PATH_ADMIN_PREFIX . 'add');
+define('PATH_ADMIN_ADD', PATH_ADMIN_PREFIX . 'edit');
 define('PATH_ADMIN_EDIT', PATH_ADMIN_PREFIX . 'edit');
 

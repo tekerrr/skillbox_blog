@@ -14,7 +14,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary">Email:</label>
                 <input type="email" id="<?=$inputName?>" name="<?=$inputName?>" autocomplete="username"
                        class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? $user->email ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
@@ -23,7 +23,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary">Имя:</label>
                 <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
                        class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? $user->email ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
@@ -32,7 +32,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary ">Пароль:</label>
                 <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="new-password"
                        class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? $user->email ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
@@ -41,7 +41,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary ">Повторите пароль:</label><br>
                 <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="new-password"
                        class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? $user->email ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
@@ -49,7 +49,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <?php $inputName = 'rules_agree'?>
                 <input type="checkbox" name="<?=$inputName?>" id="<?=$inputName?>"
                        class="form-check-input <?=$validStatus = $status[$inputName] ?? ''?>"
-                        <?=isset($_POST[$inputName]) ? 'checked' : ''?>>
+                        <?=$fieldValue[$inputName] ? 'checked' : ''?>>
                 <label class="form-check-label text-primary" for="<?=$inputName?>">
                     Согласен с <a href="?<?=PATH_RULES?>"><u>Правилами сайта</u></a>
                 </label>

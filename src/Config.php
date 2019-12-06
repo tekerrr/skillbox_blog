@@ -41,9 +41,10 @@ final class Config // Singleton
         for ($i = count($array) - 1; $i > 0; --$i) {
             $value = [$array[$i] => $value];
         }
-        $value = array_merge($this->configs[$array[0]] ?? [], $value);
+        $config = array_merge($this->configs[$array[0]] ?? [], $value);
+        $this->configs[$array[0]] = $config;
 
-        $content = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($value, true) . ';' . PHP_EOL;
+        $content = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($config, true) . ';' . PHP_EOL;
 
         file_put_contents(CONFIG_DIR . $array[0] . '.php', $content);
     }

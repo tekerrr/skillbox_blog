@@ -4,12 +4,13 @@
 namespace App;
 
 
-use App\Exception\NotFoundException;
+use App\Http\Exception\NotFound;
+use App\Http\Response;
 
 class Router
 {
     private static $currentPath = '';
-    private $defaultPath = '';
+    private $defaultRedirectPath = PATH_DEFAULT;
     private $routes = [];
 
     public static function getCurrentPath(): string
@@ -27,12 +28,6 @@ class Router
         return stristr(self::getCurrentPath(), $path) ? 'active' : '';
     }
 
-    public static function redirectTo(string $path)
-    {
-        header('Location: /?' . $path);
-        die();
-    }
-
     public function get($path, $callback): self
     {
         $this->routes[] = new Route('get', $path, $callback);
@@ -47,13 +42,13 @@ class Router
 
     /**
      * @return mixed
-     * @throws NotFoundException
+     * @throws \App\Http\Exception\NotFound
      * @throws \Exception
      */
     public function dispatch()
     {
         if (! $method = $this->getRequestType()) {
-            self::redirectTo($this->defaultPath);
+            return Response::redirect($this->defaultRedirectPath);
         }
         $keys = $this->getKeysFromRequest($method);
 
@@ -64,26 +59,18 @@ class Router
             }
         }
 
-        throw new NotFoundException();
+        throw new NotFound();
     }
 
-    public function setDefaultPath(string $defaultPath): void
+    public function setDefaultRedirectPath(string $defaultRedirectPath): void
     {
-        $this->defaultPath = $defaultPath;
+        $this->defaultRedirectPath = $defaultRedirectPath;
     }
 
-    public function setGroupsForLastRoute(array $groups, string $redirectPath = ''): void
-    {
-        if ($route = $this->getLastRoute()) {
-            $route->setGroups($groups);
-            $this->setRedirectPathForLastRoute($redirectPath);
-        }
-    }
-
-    private function setRedirectPathForLastRoute(string $path): void
+    public function setAccessForLastRoute(array $groups, string $redirectPath = ''): void
     {
         if ($route = $this->getLastRoute()) {
-            $route->setRedirectPath($path);
+            $route->setAccess($groups, $redirectPath ?: $this->defaultRedirectPath);
         }
     }
 

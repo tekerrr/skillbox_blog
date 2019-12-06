@@ -4,7 +4,7 @@
 namespace App\Controller;
 
 
-use App\Controller\Checker\Checkable;
+use App\Validation\Form\Checkable;
 
 class  Form
 {

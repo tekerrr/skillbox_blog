@@ -23,7 +23,7 @@ class Reflections extends Singleton
 	 * Instantiates a new ReflectionClass for the given class.
 	 *
 	 * @param string $class Name of a class
-	 * @return Reflections $this so you can chain calls like Reflections::instance()->add('class')->get()
+	 * @return Reflections $this so you can chain calls like Reflections::instance()->edit('class')->get()
 	 */
 	public function add($class=null)
 	{
@@ -31,7 +31,7 @@ class Reflections extends Singleton
 
 		if (!isset($this->reflections[$class]))
 			$this->reflections[$class] = new ReflectionClass($class);
-			
+
 		return $this;
 	}
 
@@ -39,7 +39,7 @@ class Reflections extends Singleton
 	 * Destroys the cached ReflectionClass.
 	 *
 	 * Put this here mainly for testing purposes.
-	 * 
+	 *
 	 * @param string $class Name of a class.
 	 * @return void
 	 */
@@ -48,7 +48,7 @@ class Reflections extends Singleton
 		if (isset($this->reflections[$class]))
 			$this->reflections[$class] = null;
 	}
-	
+
 	/**
 	 * Get a cached ReflectionClass.
 	 *

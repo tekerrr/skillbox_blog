@@ -1090,7 +1090,7 @@ class Model
 				return false;
 		}
 
-		// need to store reference b4 validating so that custom validators have access to add errors
+		// need to store reference b4 validating so that custom validators have access to edit errors
 		$this->errors = $validator->get_record();
 		$validator->validate();
 

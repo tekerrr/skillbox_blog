@@ -14,7 +14,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary">Email:</label>
                 <input type="email" id="<?=$inputName?>" name="<?=$inputName?>" autocomplete="username"
                        class="form-control rounded-0  <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
@@ -23,11 +23,11 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 <label for="<?=$inputName?>" class="text-primary ">Пароль:</label>
                 <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="current-password"
                        class="form-control rounded-0 <?=$validStatus = $status[$inputName] ?? ''?>"
-                       value="<?=$_POST[$inputName] ?? ''?>">
+                       value="<?=$fieldValue[$inputName] ?? ''?>">
                 <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
             </div>
 
-            <?php if (! empty($error)): ?>
+            <?php if (isset($error)): ?>
                 <div class="alert alert-primary" role="alert">
                     Неверный email или пароль
                 </div>

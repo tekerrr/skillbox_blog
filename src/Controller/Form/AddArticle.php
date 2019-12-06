@@ -4,7 +4,7 @@
 namespace App\Controller\Form;
 
 
-use App\Controller\Checker\ChainOfResponsibility\EmptyFile;
+use App\Validation\Form\ChainOfResponsibility\EmptyFile;
 
 class AddArticle extends EditArticle
 {
@@ -12,7 +12,7 @@ class AddArticle extends EditArticle
     {
         parent::__construct();
 
-        $imageChecker = (new EmptyFile('article'))->setErrorMessage('Выберите изображение');
+        $imageChecker = (new EmptyFile('img_article'))->setErrorMessage('Выберите изображение');
         $this->setCheckableItem($imageChecker);
     }
 }

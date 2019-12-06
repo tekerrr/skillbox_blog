@@ -11,6 +11,5 @@ interface HasImage
 
     public function addImage(string $name): void;
     public function deleteImage(): void;
-    public function deleteWithImage();
-    // TODO deleteWithImage() проверить!!
+    public function delete();
 }

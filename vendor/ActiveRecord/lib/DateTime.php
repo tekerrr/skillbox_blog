@@ -23,7 +23,7 @@ namespace ActiveRecord;
  * echo (string)$now;           # 02 Jan 03:04
  * </code>
  *
- * You can also add your own pre-defined friendly formatters:
+ * You can also edit your own pre-defined friendly formatters:
  *
  * <code>
  * ActiveRecord\DateTime::$FORMATS['awesome_format'] = 'H:i:s m/d/Y';
@@ -182,13 +182,13 @@ class DateTime extends \DateTime implements DateTimeInterface
 		$this->flag_dirty();
 		return parent::setTimezone($timezone);
 	}
-	
+
 	public function modify($modify)
 	{
 		$this->flag_dirty();
 		return parent::modify($modify);
 	}
-	
+
 	public function add($interval)
 	{
 		$this->flag_dirty();

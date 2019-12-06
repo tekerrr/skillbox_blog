@@ -10,13 +10,15 @@ class Image
 {
     /*** @var HasImage */
     private $hasImage;
-    private $type;
+    private $class;
     private $errors = [];
 
-    public function __construct(HasImage $hasImage, string $type)
+    const FIELD_PREFIX = 'img_';
+
+    public function __construct(HasImage $hasImage)
     {
         $this->hasImage = $hasImage;
-        $this->type = $type;
+        $this->class = strtolower($this->getClassName());
     }
 
     public function getErrors(): array
@@ -26,7 +28,7 @@ class Image
 
     public function save(): bool
     {
-        $uploadedFile = $this->getLoadedFile($this->type);
+        $uploadedFile = $this->getLoadedFile(self::FIELD_PREFIX . $this->class);
 
         if (! ($uploadedFile && $this->isImage($uploadedFile['tmp_name']) && $this->checkSize($uploadedFile['size']))) {
             return false;
@@ -60,6 +62,15 @@ class Image
             $this->getHasImage()->deleteImage();
         }
         return true;
+    }
+
+    private function getClassName(): string
+    {
+        if ($pos = strrpos($className = get_class($this->hasImage), '\\')) {
+            $className = substr($className, $pos + 1);
+        }
+
+        return $className;
     }
 
     private function getHasImage(): HasImage
@@ -105,7 +116,7 @@ class Image
 
     private function checkSize(int $fileSize): bool
     {
-        if (($size = Config::getInstance()->get('image.' . $this->type . '_size')) && $fileSize > $size) {
+        if (($size = Config::getInstance()->get('image.' . $this->class . '_size')) && $fileSize > $size) {
             $this->setError('Файл не должен превышать ' . round($size / (1024 * 1024)) .' Мб');
             return false;
         }
@@ -148,6 +159,6 @@ class Image
 
     private function getFullFolder(): string
     {
-        return Config::getInstance()->get('image.folder') . $this->type . '/';
+        return Config::getInstance()->get('image.folder') . $this->class . '/';
     }
 }

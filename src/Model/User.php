@@ -51,9 +51,13 @@ class User extends AbstractModel implements HasImage
      * @return bool|void
      * @throws \ActiveRecord\ActiveRecordException
      */
-    public function deleteWithImage()
+    public function delete()
     {
-        (new Image($this, 'avatar'))->delete();
+        (new Image($this))->delete();
+        /** @var Subscriber $subscriber */
+        if ($subscriber = Subscriber::find_by_email($this->email)) {
+            $subscriber->delete();
+        }
         parent::delete();
     }
 

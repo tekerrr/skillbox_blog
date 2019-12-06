@@ -4,17 +4,16 @@
 namespace App;
 
 
-use App\Controller\Auth;
 use App\Controller\Controller;
-use App\Exception\ForbiddenException;
 
 class Route
 {
     private $method;
     private $path;
     private $callback;
-    private $groups = ['everybody'];
-    private $redirectPath;
+
+    /*** @var Access */
+    private $access;
 
     /**
      * Route constructor.
@@ -27,23 +26,11 @@ class Route
         $this->method = $method;
         $this->path = $this->preparePath($path);
         $this->callback = $callback;
-        $this->redirectPath = PATH_DEFAULT;
     }
 
-    /**
-     * @param array $groups
-     */
-    public function setGroups(array $groups): void
+    public function setAccess(array $groups, string $redirectPath): void
     {
-        $this->groups = $groups;
-    }
-
-    /**
-     * @param string $path
-     */
-    public function setRedirectPath(string $path): void
-    {
-        $this->redirectPath = $path;
+        $this->access = new Access($groups, $redirectPath);
     }
 
     /**
@@ -66,51 +53,28 @@ class Route
 
     /**
      * @param $uri
-     * @return mixed
+     * @return Renderable
      * @throws \Exception
      */
     public function run($uri)
     {
-        if ($this->checkGroups()) {
-            return call_user_func_array(
-                $this->prepareCallback($this->callback),
-                $this->getParams($this->preparePath($uri))
-            );
+        if (! $this->checkAccess()) {
+            return $this->access->getResponse();
         }
 
-        $this->redirect();
+        return call_user_func_array(
+            $this->prepareCallback($this->callback),
+            $this->getParams($this->preparePath($uri))
+        );
     }
 
-    /**
-     * @throws ForbiddenException
-     */
-    private function redirect(): void
+    private function checkAccess(): bool
     {
-        if (($redirectPath = $this->redirectPath) == '403') {
-            throw new ForbiddenException();
-        }
-        Router::redirectTo($this->redirectPath);
-    }
-
-    /**
-     * @return bool
-     */
-    private function checkGroups(): bool
-    {
-        if (in_array('everybody', $this->groups)) {
-            return true;
+        if ($this->access) {
+            return $this->access->check();
         }
 
-        $userGroups = Auth::getInstance()->get('user.groups');
-        if (in_array('all', $this->groups)) {
-            return ! empty($userGroups);
-        }
-
-        if (in_array('none', $this->groups)) {
-            return empty($userGroups);
-        }
-
-        return Auth::getInstance()->checkGroups($this->groups);
+        return true;
     }
 
     /**
@@ -149,11 +113,16 @@ class Route
     private function getCallbackFromString($string): array
     {
         $array = explode('@', $string);
-        if (Controller::class === $array[0] && method_exists($controller = new $array[0], $array[1])) {
+        if ($this->checkControllerClass($array[0]) && method_exists($controller = new $array[0], $array[1])) {
             return [$controller, $array[1]];
         }
 
         throw new \Exception('Не сущестсует метод "' . $array[1] . '" класса "' . $array[0] . '"');
+    }
+
+    private function checkControllerClass(string $class): bool
+    {
+        return is_a($class, Controller\AbstractController::class, true);
     }
 
     private function getParams(string $uri): array

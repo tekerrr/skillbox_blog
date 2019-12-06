@@ -49,7 +49,7 @@ class DateTimeTest extends SnakeCase_PHPUnit_Framework_TestCase
 		$this->assert_dirtifies('setTimestamp',1);
 		$this->assert_dirtifies('setTimezone',$timezone);
 		$this->assert_dirtifies('modify','+1 day');
-		$this->assert_dirtifies('add',$interval);
+		$this->assert_dirtifies('edit',$interval);
 		$this->assert_dirtifies('sub',$interval);
 	}
 

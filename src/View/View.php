@@ -8,8 +8,8 @@ use App\Renderable;
 
 class View implements Renderable
 {
-    private $location;
-    private $config;
+    protected $location;
+    protected $config;
 
     public function __construct(string $location, array $config = [])
     {
@@ -35,7 +35,7 @@ class View implements Renderable
         $this->config = array_merge($this->config, $additionalConfig);
     }
 
-    private function formatLocation(string $path): string
+    protected function formatLocation(string $path): string
     {
         return str_replace('.','/', trim($path)) . '.php';
     }

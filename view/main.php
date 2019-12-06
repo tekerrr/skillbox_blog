@@ -50,9 +50,10 @@ include VIEW_LAYOUT_DIR . 'header.php';
                             <input type="email" name="email" class="form-control rounded-0"
                                    value="<?=$userEmail?>" readonly>
                         <?php else: ?>
-                            <input type="email" name="email" placeholder="Enter email"
-                                   class="form-control rounded-0  <?=$validStatus = $status['email'] ?? ''?>"
-                                   value="<?=$_POST['email'] ?? ''?>">
+                            <?php $inputName = 'email'?>
+                            <input type="email" name="<?=$inputName?>" placeholder="Enter email"
+                                   class="form-control rounded-0  <?=$validStatus = $status[$inputName] ?? ''?>"
+                                   value="<?=$fieldValue[$inputName] ?? ''?>">
                         <?php endif; ?>
 
                         <input type="hidden" name="current_main_page" value="<?=$paginator->getCurrentPage()?>">

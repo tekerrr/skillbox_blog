@@ -23,7 +23,7 @@ include VIEW_LAYOUT_DIR . (! empty($admin_header) ? 'admin_header.php' : 'header
                 <?php foreach ($comments as $comment): ?>
                     <div class="media py-3">
                         <div class="col-1 mr-3">
-                            <img src="/img/avatar/<?=$comment['user']['image'] ?? 'default_avatar.png'?>" alt="post img" class="img-fluid">
+                            <img src="/img/user/<?=$comment['user']['image'] ?? 'default_avatar.png'?>" alt="post img" class="img-fluid">
                         </div>
                         <div class="media-body py-0">
                             <h4><?=$comment['user']['name']?></h4>

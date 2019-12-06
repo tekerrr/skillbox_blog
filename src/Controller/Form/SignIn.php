@@ -4,10 +4,10 @@
 namespace App\Controller\Form;
 
 
-use App\Controller\Checker\ChainOfResponsibility\EmptyField;
-use App\Controller\Checker\ChainOfResponsibility\Length;
-use App\Controller\Checker\ChainOfResponsibility\ValidEmail;
 use App\Controller\Form;
+use App\Validation\Form\ChainOfResponsibility\EmptyField;
+use App\Validation\Form\ChainOfResponsibility\Length;
+use App\Validation\Form\ChainOfResponsibility\ValidEmail;
 
 class SignIn extends Form
 {

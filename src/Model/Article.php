@@ -19,7 +19,7 @@ class Article extends AbstractModel implements HasImage
     {
         return self::create(['title' => $title,
             'abstract' => $abstract,
-            'text' => (new Formatter\Paragraph())->format($text),
+            'text' => (new \App\Formatter\Paragraph())->format($text),
             'active' => false,
             'create_time' => (new DateTime())]);
     }
@@ -47,7 +47,7 @@ class Article extends AbstractModel implements HasImage
     {
         $this->title = $title;
         $this->abstract = $abstract;
-        $this->text = (new Formatter\Paragraph())->format($text);
+        $this->text = (new \App\Formatter\Paragraph())->format($text);
         $this->save();
     }
 
@@ -86,9 +86,9 @@ class Article extends AbstractModel implements HasImage
      * @return bool|void
      * @throws \ActiveRecord\ActiveRecordException
      */
-    public function deleteWithImage()
+    public function delete()
     {
-        (new Image($this, 'article'))->delete();
+        (new Image($this))->delete();
         parent::delete();
     }
 

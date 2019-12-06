@@ -2,10 +2,13 @@
 
 include VIEW_LAYOUT_BASE_DIR . 'header.php';
 
+use App\Config;
 use App\Controller\Auth;
 use App\Model\Article;
 use App\Model\StaticPage;
 use App\Router;
+
+$articlesPerHeader = Config::getInstance()->get('admin_settings.articles_per_header');
 
 ?>
 <body>
@@ -33,7 +36,7 @@ use App\Router;
                     <a class="nav-link dropdown-toggle <?=Router::isActivePath(PATH_ARTICLE)?>"
                        href="" data-toggle="dropdown">Статьи</a>
                     <div class="dropdown-menu">
-                        <?php foreach (Article::lastArticlesWithIdAndTitle(4) as $lastArticle): ?>
+                        <?php foreach (Article::lastArticlesWithIdAndTitle($articlesPerHeader) as $lastArticle): ?>
                             <a class="dropdown-item" href="?<?=PATH_ARTICLE?>/<?=$lastArticle->id?>">
                                 <?=$lastArticle->title?>
                             </a>

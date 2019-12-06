@@ -11,12 +11,12 @@ include VIEW_LAYOUT_DIR . 'header.php';
 
         <!--    Avatar    -->
         <div class="col-4">
-            <img src="/img/avatar/<?=$user['image'] ?? 'default_avatar.png'?>" alt="post img" class="img-fluid ">
+            <img src="/img/user/<?=$user['image'] ?? 'default_avatar.png'?>" alt="post img" class="img-fluid ">
             <div class="row justify-content-start py-3">
                 <form class="form" enctype="multipart/form-data" action="" method="post">
                     <input type="hidden" name="submit_upload_avatar" value="upload">
                     <label class="btn btn-primary rounded-0 mx-3">
-                        Загрузить аватар <input type="file" name="avatar" onchange="form.submit()" hidden>
+                        Загрузить аватар <input type="file" name="img_user" onchange="form.submit()" hidden>
                     </label>
                 </form>
                 <label><a class="btn btn-outline-primary rounded-0" href="?delete_avatar">Удалить</a></label>
@@ -33,7 +33,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                     <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Email</label>
                     <input type="email" id="<?=$inputName?>" name="<?=$inputName?>" autocomplete="username"
                            class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                           value="<?=$_POST[$inputName] ?? $user['email'] ?? ''?>">
+                           value="<?=$fieldValue[$inputName] ?? ''?>">
                     <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
                 </div>
 
@@ -42,7 +42,7 @@ include VIEW_LAYOUT_DIR . 'header.php';
                     <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Имя</label>
                     <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
                            class="form-control rounded-0 col <?=$validStatus = $status[$inputName] ?? ''?>"
-                           value="<?=$_POST[$inputName] ?? $user['name'] ?? ''?>">
+                           value="<?=$fieldValue[$inputName] ?? ''?>">
                     <?php include VIEW_TEMPLATE . 'form_invalid_message.php'; ?>
                 </div>
 
@@ -53,8 +53,10 @@ include VIEW_LAYOUT_DIR . 'header.php';
                 </div>
 
                 <div class="form-group row">
-                    <label for="about" class="text-primary col-3 pt-1">О себе</label>
-                    <textarea class="form-control rounded-0 col" name="about" id="about" rows="3"><?=$user['about'] ?? ''?></textarea>
+                    <?php $inputName = 'about'?>
+                    <label for="<?=$inputName?>" class="text-primary col-3 pt-1">О себе</label>
+                    <textarea class="form-control rounded-0 col" name="<?=$inputName?>" id="<?=$inputName?>"
+                              rows="3"><?=$fieldValue[$inputName] ?? ''?></textarea>
                 </div>
                 <div class="form-group row">
                     <div class="col"></div>

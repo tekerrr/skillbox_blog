@@ -4,9 +4,9 @@
 namespace App\Controller\Form;
 
 
-use App\Controller\Checker\ChainOfResponsibility\EmptyField;
-use App\Controller\Checker\ChainOfResponsibility\MatchFields;
 use App\Controller\Form;
+use App\Validation\Form\ChainOfResponsibility\EmptyField;
+use App\Validation\Form\ChainOfResponsibility\MatchFields;
 
 class ChangePassword extends Form
 {
