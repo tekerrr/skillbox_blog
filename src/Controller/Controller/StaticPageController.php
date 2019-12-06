@@ -20,7 +20,6 @@ class StaticPageController extends AbstractRestController
     public function create(): Renderable
     {
         return new View('static_pages.create', [
-            'title' => 'Создать статичную страницу',
             'fields' => $this->getFields(),
         ]);
     }
@@ -36,7 +35,7 @@ class StaticPageController extends AbstractRestController
             isset($_POST['p_teg']) ? (new Paragraph())->format($_POST['text']) : $_POST['text'],
         );
 
-        new FlashMessage(' Успех!', 'Статичная страница добавлена');
+        FlashMessage::push(' Успех!', 'Статичная страница добавлена');
         return (Response::redirect(PATH_ADMIN_LIST . '/static_pages'));
     }
 
@@ -64,7 +63,6 @@ class StaticPageController extends AbstractRestController
         $attributes = $staticPage->attributes();
 
         return new View('static_pages.edit', [
-            'title' => 'Редактировать статичную страницу',
             'staticPage' => $attributes,
             'fields' => $this->getFields($attributes),
         ]);
@@ -77,10 +75,6 @@ class StaticPageController extends AbstractRestController
             return Response::redirectBack();
         }
 
-        if (isset($_POST['_active'])) {
-            return $this->activate($staticPage);
-        }
-
         if (! $this->checkForm(new Form\EditStaticPage())) {
             return Response::redirectBack();
         }
@@ -90,7 +84,7 @@ class StaticPageController extends AbstractRestController
             isset($_POST['p_teg']) ? (new Paragraph())->format($_POST['text']) : $_POST['text'],
         );
 
-        new FlashMessage(' Успех!', 'Страница успешно сохранена');
+        FlashMessage::push(' Успех!', 'Страница успешно сохранена');
         return (Response::redirect(PATH_ADMIN_LIST . '/static_pages'));
     }
 
@@ -102,15 +96,7 @@ class StaticPageController extends AbstractRestController
 
         $staticPage->delete();
 
-        new FlashMessage('', 'Страница id ' . $id . ' удалена');
-        return Response::redirectBack();
-    }
-
-    private function activate(Model\StaticPage $staticPage): Renderable
-    {
-        $staticPage->setActive($active = (new StringToBoolean())->format($_POST['_active']));
-
-        new FlashMessage('', 'Страница id ' . $staticPage->id . ($active ? ' опубликована' : ' скрыта'));
+        FlashMessage::push('', 'Страница id ' . $id . ' удалена');
         return Response::redirectBack();
     }
 }

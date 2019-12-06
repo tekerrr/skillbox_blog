@@ -3,19 +3,14 @@
 
         <form method="post">
             <input type="hidden" name="_method" value="PUT">
-            <input type="hidden" name="_active" value="<?=$comment['active'] ? 'false' : 'true'?>">
-            <?php if ($comment['active']): ?>
-                <input type="submit" class="btn btn-outline-primary rounded-0"
-                       name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Снять с публикации">
-            <?php else: ?>
-                <input type="submit" class="btn btn-outline-primary rounded-0"
-                       name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Опубликовать">
-            <?php endif;?>
+            <input type="submit" class="btn btn-outline-primary rounded-0"
+                   name="<?=PATH_COMMENTS?>/<?=$id?>/<?=$active ? 'reject' : 'accept'?>"
+                   value="<?=$active ? 'Снять с публикации' : 'Опубликовать'?>">
         </form>
 
-        <button  class="btn btn-outline-danger rounded-0 ml-3" data-toggle="modal" data-target="#deleteModal<?=$comment['id']?>">Удалить</button>
+        <button  class="btn btn-outline-danger rounded-0 ml-3" data-toggle="modal" data-target="#deleteModal<?=$id?>">Удалить</button>
         <!-- Modal-->
-        <div class="modal fade" id="deleteModal<?=$comment['id']?>" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="deleteModal<?=$id?>" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -31,7 +26,7 @@
                         <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Закрыть</button>
                         <form method="post">
                             <input type="hidden" name="_method" value="DELETE">
-                            <input type="submit" class="btn btn-danger rounded-0 ml-3" name="<?=PATH_COMMENTS?>/<?=$comment['id']?>" value="Удалить">
+                            <input type="submit" class="btn btn-danger rounded-0 ml-3" name="<?=PATH_COMMENTS?>/<?=$id?>" value="Удалить">
                         </form>
                     </div>
                 </div>

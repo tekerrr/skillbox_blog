@@ -43,7 +43,6 @@ class ArticleController extends AbstractRestController
         }
 
         return new View('articles.index', [
-            'title' => 'Главная',
             'articles' => Model\Article::getModelsAttributes($articles),
             'paginator' => $paginator,
             'userEmail' => Auth::getInstance()->get('user.email'),
@@ -55,7 +54,6 @@ class ArticleController extends AbstractRestController
     public function create(): Renderable
     {
         return new View('articles.create', [
-            'title' => 'Создать статью',
             'fields' => $this->getFields(),
         ]);
     }
@@ -84,13 +82,13 @@ class ArticleController extends AbstractRestController
             $this->saveFieldsForFlashSession($form->getFields());
 
             foreach ($errors as $error) {
-                new FlashMessage('Ошибка!', $error, true);
+                FlashMessage::push('Ошибка!', $error, true);
             }
 
             return Response::redirectBack();
         }
 
-        new FlashMessage('Успех!', 'Статья добавлена');
+        FlashMessage::push('Успех!', 'Статья добавлена');
         return Response::redirect(PATH_ADMIN_LIST . '/articles');
     }
 
@@ -122,7 +120,6 @@ class ArticleController extends AbstractRestController
         $attributes = $article->attributes();
 
         return new View('articles.edit', [
-            'title' => 'Редактировать статью',
             'article' => $attributes,
             'fields' => $this->getFields($attributes),
         ]);
@@ -133,10 +130,6 @@ class ArticleController extends AbstractRestController
         /** @var Model\Article $article */
         if (! $article = Model\Article::findById($id)) {
             return Response::redirectBack();
-        }
-
-        if (isset($_POST['_active'])) {
-            return $this->activate($article);
         }
 
         if (! $this->checkForm($form = (new Form\EditArticle()))) {
@@ -157,14 +150,14 @@ class ArticleController extends AbstractRestController
                 $this->saveFieldsForFlashSession($form->getFields());
 
                 foreach ($errors as $error) {
-                    new FlashMessage('Ошибка!', $error, true);
+                    FlashMessage::push('Ошибка!', $error, true);
                 }
 
                 return Response::redirectBack();
             }
         }
 
-        new FlashMessage(' Успех!', 'Статья сохранена');
+        FlashMessage::push(' Успех!', 'Статья сохранена');
         return (Response::redirect(PATH_ADMIN_LIST . '/articles'));
     }
 
@@ -176,22 +169,7 @@ class ArticleController extends AbstractRestController
 
         $article->delete();
 
-        new FlashMessage('', 'Статья id ' . $id . ' удалена');
-        return Response::redirectBack();
-    }
-
-    private function activate(Model\Article $article): Renderable
-    {
-        $article->setActive($active = (new StringToBoolean())->format($_POST['_active']));
-
-        if (isset($_POST['notify'])) {
-            $sender = new Sender(Model\Subscriber::class, new NewArticleByPseudoEmail($article));
-            $sender->sendAll();
-        }
-
-        new FlashMessage('', 'Статья id ' . $article->id . ($active ? ' опубликована' : ' скрыта')
-            . (isset($_POST['notify']) ? ' с рассылкой сообщение по email' : ''));
-
+        FlashMessage::push('', 'Статья id ' . $id . ' удалена');
         return Response::redirectBack();
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Статьи';
 include VIEW_HEADER_ADMIN;
 
 ?>
@@ -11,8 +12,7 @@ include VIEW_HEADER_ADMIN;
 
     <div class="row pt-3 ml-0 align-items-start">
         <a class="btn btn-outline-primary rounded-0" href="<?=PATH_ARTICLES . '/create'?>">Создать</a>
-
-        <?php include VIEW_TEMPLATE . '/items_per_page_selector.php' ?>
+        <?php includeView('template.items_per_page_selector', ['itemsPerPage' => $paginatorItemsPerPage]); ?>
     </div>
 
     <div class="row py-3 border-bottom ml-0">
@@ -35,8 +35,7 @@ include VIEW_HEADER_ADMIN;
                 <?php if ($item['active']): ?>
                     <form method="post">
                         <input type="hidden" name="_method" value="PUT">
-                        <input type="hidden" name="_active" value="false">
-                        <input type="submit" class="btn btn-outline-primary rounded-0 btn-sm" name="<?=PATH_ARTICLES?>/<?=$item['id']?>" value="Сменить">
+                        <input type="submit" class="btn btn-outline-primary rounded-0 btn-sm" name="<?=PATH_ARTICLES?>/<?=$item['id']?>/deactivate" value="Сменить">
                     </form>
                 <?php else: ?>
                     <button  class="btn btn-outline-danger rounded-0 btn-sm col-4" data-toggle="modal" data-target="#activateModal<?=$item['id']?>">Сменить</button>
@@ -57,15 +56,12 @@ include VIEW_HEADER_ADMIN;
                                     <button type="button" class="btn btn-secondary rounded-0" data-dismiss="modal">Отмена</button>
                                     <form method="post">
                                         <input type="hidden" name="_method" value="PUT">
-                                        <input type="hidden" name="_active" value="true">
                                         <input type="submit" class="btn btn-primary rounded-0 ml-3"
-                                               name="<?=PATH_ARTICLES?>/<?=$item['id']?>" value="Без рассылки">
+                                               name="<?=PATH_ARTICLES?>/<?=$item['id']?>/activate" value="Без рассылки">
                                     </form>
                                     <form method="post">
                                         <input type="hidden" name="_method" value="PUT">
-                                        <input type="hidden" name="_active" value="true">
-                                        <input type="hidden" name="notify" value="true">
-                                        <input type="submit" class="btn btn-primary rounded-0 ml-3" name="<?=PATH_ARTICLES?>/<?=$item['id']?>" value="С рассылкой">
+                                        <input type="submit" class="btn btn-primary rounded-0 ml-3" name="<?=PATH_ARTICLES?>/<?=$item['id']?>/activate_with_notify" value="С рассылкой">
                                     </form>
                                 </div>
                             </div>
@@ -116,9 +112,7 @@ include VIEW_HEADER_ADMIN;
     </div>
 
     <!--Paginator-->
-    <?php if ($paginator->isNeeded()):
-        include VIEW_TEMPLATE . '/paginator.php';
-    endif; ?>
+    <?php includeViewProvided($paginator->isNeeded(), 'template.paginator', ['paginator' => $paginator]); ?>
 
 
 </div>

@@ -18,3 +18,15 @@ function array_get(array $array, string $key, $default = null)
 
     return $array;
 }
+
+function includeView(string $location, array $config = [])
+{
+    (new App\View\View($location, $config))->render();
+}
+
+function includeViewProvided(bool $condition, string $location, array $config = [])
+{
+    if ($condition) {
+        includeView($location, $config);
+    }
+}

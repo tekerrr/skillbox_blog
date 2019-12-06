@@ -17,7 +17,6 @@ class Account extends AbstractController
     public function edit(): Renderable
     {
         return new View('account.edit', [
-            'title' => 'Личный кабинет',
             'user' => ($user = Auth::getInstance()->get('user')),
             'sub'  => Auth::getInstance()->get('sub'),
             'fields' => $this->getFields($user),
@@ -38,14 +37,13 @@ class Account extends AbstractController
         $user->updateAccount($_POST['email'], htmlentities($_POST['name']), htmlentities($_POST['about']));
         Auth::getInstance()->signIn($user);
 
-        new FlashMessage('Успех!', 'Данные успешно обновлены');
+        FlashMessage::push('Успех!', 'Данные успешно обновлены');
         return (Response::redirect(PATH_ACCOUNT));
     }
 
     public function editPassword(): Renderable
     {
         return new View('account.password.edit', [
-            'title' => 'Смена пароля',
             'fields' => $this->getFields(),
         ]);
     }
@@ -59,18 +57,17 @@ class Account extends AbstractController
         $user = Auth::getInstance()->getUser();
         if (! $user->changePassword($_POST['password'], $_POST['new_password'])) {
             $this->saveFieldsForFlashSession($form->getFields());
-            new FlashMessage('Ошибка!', 'Неверный старый пароль', true);
+            FlashMessage::push('Ошибка!', 'Неверный старый пароль', true);
             return Response::redirectBack();
         }
 
-        new FlashMessage('Успех!', 'Пароль успешно изменён');
+        FlashMessage::push('Успех!', 'Пароль успешно изменён');
         return (Response::redirect(PATH_ACCOUNT));
     }
 
     public function showSignIn(): Renderable
     {
         return new View('account.sign_in', [
-            'title' => 'Авторизация',
             'fields' => $this->getFields(),
         ]);
     }
@@ -83,12 +80,31 @@ class Account extends AbstractController
 
         if (! $user = Model\User::signIn($_POST['email'], $_POST['password'])) {
             $this->saveFieldsForFlashSession($form->getFields());
-            new FlashMessage('Ошибка!', 'Неверный email или пароль', true);
+            FlashMessage::push('Ошибка!', 'Неверный email или пароль', true);
             return Response::redirectBack();
         }
 
         Auth::getInstance()->signIn($user);
         return Response::redirect(PATH_DEFAULT);
+    }
+
+    public function showSignUp(): Renderable
+    {
+        return new View('account.sign_up', [
+            'fields' => $this->getFields(),
+        ]);
+    }
+
+    public function signUp(): Renderable
+    {
+        if (! $this->checkForm($form = new Form\SignUp())) {
+            return Response::redirectBack();
+        }
+
+        $user = Model\User::createUser($_POST['email'], $_POST['password'], htmlentities($_POST['name']));
+        Auth::getInstance()->signIn($user);
+
+        return Response::redirect(PATH_ACCOUNT);
     }
 
     public function signOut(): Renderable
@@ -102,14 +118,14 @@ class Account extends AbstractController
         $avatar = new Model\Image(Auth::getInstance()->getUser());
         if (! $avatar->save()) {
             foreach (($errors = $avatar->getErrors()) as $error) {
-                new FlashMessage('Ошибка!', $error, true);
+                FlashMessage::push('Ошибка!', $error, true);
             }
 
             return Response::redirectBack();
         }
 
         Auth::getInstance()->update();
-        new FlashMessage('', 'Аватар обновлён');
+        FlashMessage::push('', 'Аватар обновлён');
         return Response::redirectBack();
     }
 
@@ -119,14 +135,14 @@ class Account extends AbstractController
 
         if (! $avatar->delete()) {
             foreach (($errors = $avatar->getErrors()) as $error) {
-                new FlashMessage('Ошибка!', $error, true);
+                FlashMessage::push('Ошибка!', $error, true);
             }
 
             return Response::redirectBack();
         }
 
         Auth::getInstance()->update();
-        new FlashMessage('', 'Аватар удалён');
+        FlashMessage::push('', 'Аватар удалён');
         return Response::redirectBack();
     }
 }

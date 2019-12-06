@@ -15,6 +15,10 @@ class EditAdminSettings extends Form
         $articlesPerPageChecker = (new EmptyField('articles_per_page'))->setErrorMessage('Введите число');
         $articlesPerPageChecker->setNext(new NaturalNumber());
 
+        $articlesPerHeaderChecker = (new EmptyField('articles_per_header'))->setErrorMessage('Введите число');
+        $articlesPerPageChecker->setNext(new NaturalNumber());
+
         $this->setCheckableItem($articlesPerPageChecker);
+        $this->setCheckableItem($articlesPerHeaderChecker);
     }
 }

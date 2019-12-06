@@ -30,7 +30,10 @@ include ($preview ? VIEW_HEADER_ADMIN : VIEW_HEADER);
                             <p><i><?=$comment['create_time']?></i></p>
                             <p><?=$comment['text']?></p>
 
-                            <?php include VIEW_TEMPLATE . '/comment_button_for_admin.php' ?>
+                            <?php includeView(
+                                    'template.comment_button_for_admin',
+                                    ['id' => $comment['id'], 'active' => $comment['active'], 'preview' => $preview],
+                            ); ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -42,13 +45,12 @@ include ($preview ? VIEW_HEADER_ADMIN : VIEW_HEADER);
             <div class="border-top py-4">
                 <form class="form" action="" method="post">
                     <div class="form-group">
-                        <?php $inputName = 'comment'?>
-                        <label class="h4" for="<?=$inputName?>">Оставить комментарий</label>
-                        <textarea class="form-control rounded-0 <?=$fields[$inputName]['status'] ?? ''?>"
-                                  name="<?=$inputName?>" id="<?=$inputName?>"
-                                  placeholder="Messege" onfocus="this.placeholder = ''"
-                                  onblur="this.placeholder = 'Messege'"><?=$fields[$inputName]['value'] ?? ''?></textarea>
-                        <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                        <?php includeView('template.input.area_comment', [
+                            'name' => ($name = 'comment'),
+                            'label' => 'Оставить комментарий',
+                            'field' => $fields[$name] ?? [],
+                            'rows' => '2',
+                        ]); ?>
                     </div>
                     <input type="hidden" name="article_id" value="<?=$article['id']?>">
                     <div class="row mx-0 pt-4">

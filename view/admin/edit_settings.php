@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Настройки';
 include VIEW_HEADER_ADMIN;
 
 ?>
@@ -10,44 +11,29 @@ include VIEW_HEADER_ADMIN;
     </div>
 
     <form method="post">
-        <div class="form-row align-items-center pt-2">
-            <?php $inputName = 'articles_per_page'?>
-            <div class="col-6">
-                <label for="<?=$inputName?>">Количество статей на главной странице</label>
-            </div>
-            <div class="col-1">
-                <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
-                       class="form-control rounded-0 pl-3 <?=$fields[$inputName]['status'] ?? ''?>"
-                       value="<?=$fields[$inputName]['value'] ?? ''?>">
-                <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
-            </div>
-        </div>
+        <?php includeView('template.input.setting', [
+            'name' => ($name = 'articles_per_page'),
+            'label' => 'Количество статей на главной странице',
+            'field' => $fields[$name] ?? [],
+        ]); ?>
+
+        <?php includeView('template.input.setting', [
+            'name' => ($name = 'articles_per_header'),
+            'label' => 'Количество статей на в Панели навигации',
+            'field' => $fields[$name] ?? [],
+        ]); ?>
 
         <div class="form-row align-items-center pt-2">
-            <?php $inputName = 'articles_per_header'?>
-            <div class="col-6">
-                <label for="<?=$inputName?>">Количество статей на в Панели навигации</label>
-            </div>
-            <div class="col-1">
-                <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
-                       class="form-control rounded-0 pl-3 <?=$fields[$inputName]['status'] ?? ''?>"
-                       value="<?=$fields[$inputName]['value'] ?? ''?>">
-                <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
-            </div>
-        </div>
-
-        <div class="form-row align-items-center pt-2">
-            <?php $inputName = 'items_per_page'?>
+            <?php $name = 'items_per_page_value'?>
             <div class="col-6">
                 <label class="" for="items">Количество элементов на страницах "Административного раздела"</label>
             </div>
             <div class="col-1">
                 <select class="form-control rounded-0" name="items_per_page_value" id="items">
-                    <option value="10"  <?=$fields[$inputName]['value'] == '10' ? 'selected' : ''?>>10</option>
-                    <option value="20"  <?=$fields[$inputName]['value'] == '20' ? 'selected' : ''?>>20</option>
-                    <option value="50"  <?=$fields[$inputName]['value'] == '50' ? 'selected' : ''?>>50</option>
-                    <option value="200" <?=$fields[$inputName]['value'] == '200' ? 'selected' : ''?>>200</option>
-                    <option value="all" <?=$fields[$inputName]['value'] == 'all' ? 'selected' : ''?>>Все</option>
+                    <?php $options = ['10' => '10', '20' => '20', '50' => '50', '200' => '200', 'Все' => 'all']; ?>
+                    <?php foreach ($options as $key => $value): ?>
+                        <option value="<?=$value?>"  <?=$fields[$name]['value'] == $value ? 'selected' : ''?>><?=$key?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>

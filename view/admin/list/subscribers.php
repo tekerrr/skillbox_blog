@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Подсписчики';
 include VIEW_HEADER_ADMIN;
 
 ?>
@@ -10,7 +11,7 @@ include VIEW_HEADER_ADMIN;
     </div>
 
     <div class="row pt-3 ml-0 align-items-start">
-        <?php include VIEW_TEMPLATE . '/items_per_page_selector.php' ?>
+        <?php includeView('template.items_per_page_selector', ['itemsPerPage' => $paginatorItemsPerPage]); ?>
     </div>
 
     <div class="row py-3 border-bottom ml-0">
@@ -58,9 +59,7 @@ include VIEW_HEADER_ADMIN;
     <?php endforeach; ?>
 
     <!--Paginator-->
-    <?php if ($paginator->isNeeded()):
-        include VIEW_TEMPLATE . '/paginator.php';
-    endif; ?>
+    <?php includeViewProvided($paginator->isNeeded(), 'template.paginator', ['paginator' => $paginator]); ?>
 
 
 </div>

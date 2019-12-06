@@ -18,7 +18,7 @@ trait CanBeListed
 
     /**
      * @param string $id
-     * @param bool $active
+     * @param bool $onlyActive
      * @return mixed
      */
     public static function findByIdAndOnlyActive(string $id, bool $onlyActive = true)

@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Редактирование пользователя';
 include VIEW_HEADER_ADMIN;
 
 ?>
@@ -15,12 +16,14 @@ include VIEW_HEADER_ADMIN;
             <div class="row justify-content-start align-items-start py-3">
                 <form class="form" enctype="multipart/form-data" action="" method="post">
                     <input type="hidden" name="_method" value="PUT">
-                    <input type="hidden" name="_avatar" value="">
-                    <input type="hidden" name="<?=PATH_USERS?>/<?=$user['id']?>" value="">
+                    <input type="hidden" name="<?=PATH_USERS?>/<?=$user['id']?>/upload_avatar" value="">
                     <label class="btn btn-primary rounded-0 mx-3 my-0">
                         Загрузить аватар <input type="file" name="img_user" onchange="form.submit()" hidden>
                     </label>
-                    <input type="submit" name="_delete" class="btn btn-outline-primary rounded-0" value="Удалить">
+                </form>
+                <form class="form" action="" method="post">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="submit" name="<?=PATH_USERS?>/<?=$user['id']?>/delete_avatar" class="btn btn-outline-primary rounded-0" value="Удалить">
                 </form>
             </div>
         </div>
@@ -31,28 +34,35 @@ include VIEW_HEADER_ADMIN;
                 <input type="hidden" name="id" value="<?=$user['id']?>">
 
                 <div class="form-group row justify-content-start">
-                    <?php $inputName = 'email'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Email</label>
-                    <input type="email" id="<?=$inputName?>" name="<?=$inputName?>"
-                           class="form-control rounded-0 col <?=$fields[$inputName]['status'] ?? ''?>"
-                           value="<?=$fields[$inputName]['value'] ?? ''?>">
-                    <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                    <?php includeView('template.input.input', [
+                        'name' => ($name = 'email'),
+                        'label' => 'Email',
+                        'field' => $fields[$name] ?? [],
+                        'type' => 'email',
+                        'addLabelClass' => 'col-3 align-self-end',
+                        'addInputClass' => 'col',
+                        'add' => 'autocomplete="username"',
+                    ]); ?>
                 </div>
 
                 <div class="form-group row justify-content-start">
-                    <?php $inputName = 'name'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Имя</label>
-                    <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
-                           class="form-control rounded-0 col <?=$fields[$inputName]['status'] ?? ''?>"
-                           value="<?=$fields[$inputName]['value'] ?? ''?>">
-                    <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                    <?php includeView('template.input.input', [
+                        'name' => ($name = 'name'),
+                        'label' => 'Имя',
+                        'field' => $fields[$name] ?? [],
+                        'addLabelClass' => 'col-3 align-self-end',
+                        'addInputClass' => 'col',
+                    ]); ?>
                 </div>
 
                 <div class="form-group row">
-                    <?php $inputName = 'about'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 pt-1">О себе</label>
-                    <textarea class="form-control rounded-0 col" name="<?=$inputName?>" id="<?=$inputName?>"
-                              rows="3"><?=$fields[$inputName]['value'] ?? ''?></textarea>
+                    <?php includeView('template.input.area', [
+                        'name' => ($name = 'about'),
+                        'label' => 'О себе',
+                        'field' => $fields[$name] ?? [],
+                        'addLabelClass' => 'col-3 pt-1',
+                        'addInputClass' => 'col',
+                    ]); ?>
                 </div>
                 <div class="form-group row">
                     <div class="col"></div>
@@ -81,9 +91,8 @@ include VIEW_HEADER_ADMIN;
                         <?=$active ? 'Состоит' : 'Не состоит'?>
                     </text>
                     <input type="hidden" name="_method" value="PUT">
-                    <input type="hidden" name="_group" value="<?=$group?>">
-                    <input type="hidden" name="group_activate" value="<?=! $active?>">
-                    <input type="submit" name="<?=PATH_USERS?>/<?=$user['id']?>" class="btn btn-outline-primary rounded-0 btn-sm  ml-1"
+                    <input type="hidden" name="group" value="<?=$group?>">
+                    <input type="submit" name="<?=PATH_USERS?>/<?=$user['id']?>/<?=$active ? 'leave_group' : 'join_group'?>" class="btn btn-outline-primary rounded-0 btn-sm  ml-1"
                            value="Сменить">
                 </form>
             </div>

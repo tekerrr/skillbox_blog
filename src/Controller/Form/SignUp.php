@@ -30,7 +30,7 @@ class SignUp extends Form
         $matchChecker->setReferenceFieldName('password');
         $password2Checker->setNext($matchChecker);
 
-        $rulesChecker = (new EmptyField('rules_agree'));
+        $rulesChecker = (new EmptyField('rules_agree'))->setErrorMessage('Вы должны согласиться перед регистрацией');
 
         $this->setCheckableItems([
             $emailChecker,

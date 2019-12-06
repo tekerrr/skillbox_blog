@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Смена пароля';
 include VIEW_HEADER;
 
 ?>
@@ -10,30 +11,33 @@ include VIEW_HEADER;
             <h3 class="text-center text-primary">Смена пароля</h3>
 
             <div class="form-group">
-                <?php $inputName = 'password'?>
-                <label for="<?=$inputName?>" class="text-primary ">Старый:</label><br>
-                <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="current-password"
-                       class="form-control rounded-0 <?=$fields[$inputName]['status'] ?? ''?>"
-                       value="<?=$fields[$inputName]['value'] ?? ''?>">
-                <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                <?php includeView('template.input.input', [
+                    'name' => ($name = 'password'),
+                    'label' => 'Старый:',
+                    'field' => $fields[$name] ?? [],
+                    'type' => 'password',
+                    'add' => 'autocomplete="current-password"',
+                ]); ?>
             </div>
 
             <div class="form-group">
-                <?php $inputName = 'new_password'?>
-                <label for="<?=$inputName?>" class="text-primary ">Новый:</label><br>
-                <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="new-password"
-                       class="form-control rounded-0 <?=$fields[$inputName]['status'] ?? ''?>"
-                       value="<?=$fields[$inputName]['value'] ?? ''?>">
-                <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                <?php includeView('template.input.input', [
+                    'name' => ($name = 'new_password'),
+                    'label' => 'Новый:',
+                    'field' => $fields[$name] ?? [],
+                    'type' => 'password',
+                    'add' => 'autocomplete="new-password"',
+                ]); ?>
             </div>
 
             <div class="form-group">
-                <?php $inputName = 'new_password2'?>
-                <label for="<?=$inputName?>" class="text-primary ">Повторите пароль:</label><br>
-                <input type="password" name="<?=$inputName?>" id="<?=$inputName?>" autocomplete="new-password"
-                       class="form-control rounded-0 <?=$fields[$inputName]['status'] ?? ''?>"
-                       value="<?=$fields[$inputName]['value'] ?? ''?>">
-                <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                <?php includeView('template.input.input', [
+                    'name' => ($name = 'new_password2'),
+                    'label' => 'Повторите пароль:',
+                    'field' => $fields[$name] ?? [],
+                    'type' => 'password',
+                    'add' => 'autocomplete="new-password"',
+                ]); ?>
             </div>
 
             <div class="row form-group mx-0">

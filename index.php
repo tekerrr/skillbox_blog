@@ -32,16 +32,30 @@ $router->get(PATH_ADMIN, function () {
 $articleRest = new Rest('articles', Controller\ArticleController::class);
 $articleRest->setSameAccessFroRoutes(['create', 'store', 'edit', 'update', 'destroy'], [ADMINS, AUTHORS], '403');
 $router->setRest($articleRest);
+$router->put(PATH_ARTICLES . '/*/activate', Controller\ContentModerationController::class . '@activateArticle');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
+$router->put(PATH_ARTICLES . '/*/activate_with_notify', Controller\ContentModerationController::class . '@activateArticleWithNotify');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
+$router->put(PATH_ARTICLES . '/*/deactivate', Controller\ContentModerationController::class . '@deactivateArticle');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
 
 $staticPageRest = new Rest('static_pages', Controller\StaticPageController::class);
 $staticPageRest->except(['index']);
 $staticPageRest->setSameAccessFroRoutes(['create', 'store', 'edit', 'update', 'destroy'], [ADMINS, AUTHORS], '403');
 $router->setRest($staticPageRest);
+$router->put(PATH_STATIC_PAGES . '/*/activate', Controller\ContentModerationController::class . '@activateStaticPage');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
+$router->put(PATH_STATIC_PAGES . '/*/deactivate', Controller\ContentModerationController::class . '@deactivateStaticPage');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
 
 $commentRest = new Rest('comments', Controller\CommentController::class);
-$commentRest->only(['store', 'update', 'destroy']);
+$commentRest->only(['store', 'destroy']);
 $commentRest->setSameAccessFroRoutes(['update', 'destroy'], [ADMINS, AUTHORS], '403');
 $router->setRest($commentRest);
+$router->put(PATH_COMMENTS . '/*/accept', Controller\ContentModerationController::class . '@acceptComment');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
+$router->put(PATH_COMMENTS . '/*/reject', Controller\ContentModerationController::class . '@rejectComment');
+$router->setAccessForLastRoute([ADMINS, AUTHORS], '403');
 
 $subscriberRest = new Rest('subscribers', Controller\SubscriberController::class);
 $subscriberRest->only(['store', 'destroy']);
@@ -50,10 +64,21 @@ $router->setRest($subscriberRest);
 $router->get(PATH_UNSUBSCRIBE . '/*/*', Controller\SubscriberController::class . '@unsubscribe');
 
 $userRest = new Rest('users', Controller\UserController::class);
-$userRest->except(['index', 'show']);
-$userRest->setSameAccessFroRoutes(['create', 'store'], ['none']);
+$userRest->only(['edit', 'update', 'destroy']);
 $userRest->setSameAccessFroRoutes(['edit', 'update', 'destroy'], [ADMINS], '403');
 $router->setRest($userRest);
+$router->put(PATH_USERS . '/*/activate', Controller\UserController::class . '@activate');
+$router->setAccessForLastRoute([ADMINS], '403');
+$router->put(PATH_USERS . '/*/deactivate', Controller\UserController::class . '@deactivate');
+$router->setAccessForLastRoute([ADMINS], '403');
+$router->put(PATH_USERS . '/*/upload_avatar', Controller\UserController::class . '@updateAvatar');
+$router->setAccessForLastRoute([ADMINS], '403');
+$router->put(PATH_USERS . '/*/delete_avatar', Controller\UserController::class . '@deleteAvatar');
+$router->setAccessForLastRoute([ADMINS], '403');
+$router->put(PATH_USERS . '/*/join_group', Controller\UserController::class . '@joinGroup');
+$router->setAccessForLastRoute([ADMINS], '403');
+$router->put(PATH_USERS . '/*/leave_group', Controller\UserController::class . '@leaveGroup');
+$router->setAccessForLastRoute([ADMINS], '403');
 
 $router
     ->get(PATH_ACCOUNT, Controller\Account::class . '@edit')
@@ -74,8 +99,12 @@ $router
 $router
     ->get(PATH_SIGN_IN, Controller\Account::class . '@showSignIn')
     ->setAccessForLastRoute(['none'])
+;$router
+    ->get(PATH_SIGN_UP, Controller\Account::class . '@showSignUp')
+    ->setAccessForLastRoute(['none'])
 ;
 $router->post(PATH_SIGN_IN, Controller\Account::class . '@signIn');
+$router->post(PATH_SIGN_UP, Controller\Account::class . '@signUp');
 $router->get(PATH_SIGN_OUT, Controller\Account::class . '@signOut');
 
 // Admin Paths

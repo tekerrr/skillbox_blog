@@ -25,7 +25,7 @@ class SubscriberController extends AbstractRestController
         Model\Subscriber::subscribe($_POST['email']);
         Auth::getInstance()->update();
 
-        new FlashMessage('Успех!', 'Подписка на email "' . $_POST['email'] . '" успешно оформлена.');
+        FlashMessage::push('Успех!', 'Подписка на email "' . $_POST['email'] . '" успешно оформлена.');
         return Response::redirectBack();
     }
 
@@ -37,7 +37,7 @@ class SubscriberController extends AbstractRestController
 
         $subscriber->delete();
 
-        new FlashMessage('', 'Подписчик email ' . $subscriber->email . ' удален');
+        FlashMessage::push('', 'Подписчик email ' . $subscriber->email . ' удален');
         return Response::redirectBack();
     }
 
@@ -49,7 +49,7 @@ class SubscriberController extends AbstractRestController
 
         Auth::getInstance()->update();
 
-        new FlashMessage('Успех!', 'Вы отписались от получения сообщений о новых статьях ');
+        FlashMessage::push('Успех!', 'Вы отписались от получения сообщений о новых статьях ');
         return Response::redirect($_GET['from'] ?? PATH_MAIN);
     }
 }

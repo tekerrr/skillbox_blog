@@ -2,11 +2,10 @@
     <div class="btn-group">
         <label class="col-9 align-self-end" for="items">Количество на странице</label>
         <select class="form-control rounded-0 " name="items_per_page" id="items" onchange="form.submit()">
-            <option value="10"  <?=$paginatorItemsPerPage == '10' ? 'selected' : ''?>>10</option>
-            <option value="20"  <?=$paginatorItemsPerPage == '20' ? 'selected' : ''?>>20</option>
-            <option value="50"  <?=$paginatorItemsPerPage == '50' ? 'selected' : ''?>>50</option>
-            <option value="200" <?=$paginatorItemsPerPage == '200' ? 'selected' : ''?>>200</option>
-            <option value="all" <?=$paginatorItemsPerPage == 'all' ? 'selected' : ''?>>Все</option>
+            <?php $options = ['10' => '10', '20' => '20', '50' => '50', '200' => '200', 'Все' => 'all']; ?>
+            <?php foreach ($options as $key => $value): ?>
+                <option value="<?=$value?>"  <?=$itemsPerPage == $value ? 'selected' : ''?>><?=$key?></option>
+            <?php endforeach; ?>
         </select>
         <input type="hidden" name="_method" value="PUT">
     </div>

@@ -81,4 +81,4 @@ $articlesPerHeader = Config::getInstance()->get('admin_settings.articles_per_hea
     </div>
 
 </header>
-<?php include VIEW_TEMPLATE . '/flash_messages.php'?>
+<?php App\View\FlashMessage::showAll();?>

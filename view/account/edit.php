@@ -1,5 +1,6 @@
 <?php
 
+$title = 'Личный кабинет';
 include VIEW_HEADER;
 
 ?>
@@ -30,34 +31,40 @@ include VIEW_HEADER;
             <form class="form" action="" method="post">
 
                 <div class="form-group row justify-content-start">
-                    <?php $inputName = 'email'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Email</label>
-                    <input type="email" id="<?=$inputName?>" name="<?=$inputName?>" autocomplete="username"
-                           class="form-control rounded-0 col <?=$fields[$inputName]['status'] ?? ''?>"
-                           value="<?=$fields[$inputName]['value'] ?? ''?>">
-                    <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                    <?php includeView('template.input.input', [
+                        'name' => ($name = 'email'),
+                        'label' => 'Email',
+                        'field' => $fields[$name] ?? [],
+                        'type' => 'email',
+                        'addLabelClass' => 'col-3 align-self-end',
+                        'addInputClass' => 'col',
+                        'add' => 'autocomplete="username"',
+                    ]); ?>
                 </div>
 
                 <div class="form-group row justify-content-start">
-                    <?php $inputName = 'name'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 align-self-end">Имя</label>
-                    <input type="text" id="<?=$inputName?>" name="<?=$inputName?>"
-                           class="form-control rounded-0 col <?=$fields[$inputName]['status'] ?? ''?>"
-                           value="<?=$fields[$inputName]['value'] ?? ''?>">
-                    <?php include VIEW_TEMPLATE . '/form_invalid_message.php'; ?>
+                    <?php includeView('template.input.input', [
+                        'name' => ($name = 'name'),
+                        'label' => 'Имя',
+                        'field' => $fields[$name] ?? [],
+                        'addLabelClass' => 'col-3 align-self-end',
+                        'addInputClass' => 'col',
+                    ]); ?>
                 </div>
 
                 <div class="form-group row justify-content-end">
-                    <?php $inputName = 'password'?>
                     <text class="text-primary col align-self-center">Пароль</text>
                     <a class="btn btn-outline-secondary rounded-0 col-4 border" href="<?=PATH_PASSWORD?>">Сменить</a>
                 </div>
 
                 <div class="form-group row">
-                    <?php $inputName = 'about'?>
-                    <label for="<?=$inputName?>" class="text-primary col-3 pt-1">О себе</label>
-                    <textarea class="form-control rounded-0 col" name="<?=$inputName?>" id="<?=$inputName?>"
-                              rows="3"><?=$fields[$inputName]['value'] ?? ''?></textarea>
+                    <?php includeView('template.input.area', [
+                        'name' => ($name = 'about'),
+                        'label' => 'О себе',
+                        'field' => $fields[$name] ?? [],
+                        'addLabelClass' => 'col-3 pt-1',
+                        'addInputClass' => 'col',
+                    ]); ?>
                 </div>
                 <div class="form-group row">
                     <div class="col"></div>

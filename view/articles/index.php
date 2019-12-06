@@ -1,7 +1,6 @@
 <?php
 
-use App\Controller\Auth;
-
+$title = 'Главная';
 include VIEW_HEADER;
 
 ?>
@@ -35,9 +34,7 @@ include VIEW_HEADER;
     <?php endforeach; ?>
 
     <!--Paginator-->
-    <?php if ($paginator->isNeeded()):
-        include VIEW_TEMPLATE . '/paginator.php';
-    endif; ?>
+    <?php includeViewProvided($paginator->isNeeded(), 'template.paginator', ['paginator' => $paginator]); ?>
 
     <!--Подписка-->
     <?php if (! $sub): ?>

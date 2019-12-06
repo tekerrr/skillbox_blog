@@ -22,7 +22,7 @@ class CommentController extends AbstractRestController
         }
 
         if (! $id = Auth::getInstance()->get('user.id')) {
-            new FlashMessage('Ошибка!', 'Для отравки комментария необходимо авторизироваться.', true);
+            FlashMessage::push('Ошибка!', 'Для отравки комментария необходимо авторизироваться.', true);
         } else {
             Model\Comment::add(
                 $id,
@@ -30,23 +30,9 @@ class CommentController extends AbstractRestController
                 htmlentities($_POST['comment']),
                 $confirmed = Auth::getInstance()->isPriorityUser()
             );
-            new FlashMessage('Успех!', 'Комментарий добавлен.' . ($confirmed ? '' : ' Он будет видет после модерации.'));
+            FlashMessage::push('Успех!', 'Комментарий добавлен.' . ($confirmed ? '' : ' Он будет видет после модерации.'));
         }
 
-        return Response::redirectBack();
-    }
-
-    public function update(string $id): Renderable
-    {
-        /** @var Model\StaticPage $comment */
-        if (! $comment = Model\Comment::findById($id)) {
-            return new NotFoundResponse();
-        }
-
-        if (isset($_POST['_active'])) {
-            $comment->setActive($active = (new StringToBoolean())->format($_POST['_active']));
-            new FlashMessage('', 'Комментарий id ' . $id . ($active ? ' опубликован' : ' скрыт'));
-        }
         return Response::redirectBack();
     }
 
@@ -57,7 +43,7 @@ class CommentController extends AbstractRestController
         }
 
         $comment->delete();
-        new FlashMessage('', 'Комментарий id ' . $id . ' удален');
+        FlashMessage::push('', 'Комментарий id ' . $id . ' удален');
 
         return Response::redirectBack();
     }

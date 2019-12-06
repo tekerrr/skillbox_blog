@@ -20,7 +20,6 @@ class Admin extends AbstractController
     public function editSettings(): Renderable
     {
         return new View('admin.edit_settings', [
-            'title' => 'Настройки',
             'fields' => $this->getFields(Config::getInstance()->get('admin_settings')),
         ]);
     }
@@ -34,10 +33,10 @@ class Admin extends AbstractController
         Config::getInstance()->set('admin_settings', [
             'articles_per_page' => $_POST['articles_per_page'],
             'articles_per_header' => $_POST['articles_per_header'],
-            'items_per_page' => $_POST['items_per_page_value'],
+            'items_per_page_value' => $_POST['items_per_page_value'],
         ]);
 
-        new FlashMessage('', 'Настройки обновлены');
+        FlashMessage::push('', 'Настройки обновлены');
         return Response::redirectBack();
     }
 
@@ -79,12 +78,12 @@ class Admin extends AbstractController
             return new NotFoundResponse();
         }
 
-        $itemsPerPage = $_GET['items'] ?? Config::getInstance()->get('admin_settings.items_per_page');
+        $itemsPerPageString = $_GET['items'] ?? Config::getInstance()->get('admin_settings.items_per_page_value');
 
-        if ($itemsPerPage == 'all') {
+        if ($itemsPerPageString == 'all') {
             $itemsPerPage = Config::getInstance()->get('admin_settings.items_per_page_max');
-        } elseif ((int) $itemsPerPage <= 0) {
-            $itemsPerPage = Config::getInstance()->get('admin_settings.items_per_page');
+        } elseif (($itemsPerPage = (int) $itemsPerPageString) <= 0) {
+            $itemsPerPage = Config::getInstance()->get('admin_settings.items_per_page_value');
         }
 
         $paginator = new Paginator(
@@ -104,11 +103,10 @@ class Admin extends AbstractController
         $items = Model\AbstractModel::getModelsAttributes($items);
 
         return new View('admin.list.' . $type, [
-            'title' => $this->getTitle($className),
             'items' => $items,
             'itemType' => mb_substr($type, 0, -1),
             'paginator' => $paginator,
-            'paginatorItemsPerPage' => $itemsPerPage,
+            'paginatorItemsPerPage' => $itemsPerPageString,
         ]);
     }
 
@@ -127,18 +125,5 @@ class Admin extends AbstractController
         }
 
         return $classes[$type] ?? '';
-    }
-
-    private function getTitle(string $className): string
-    {
-        $titles = [
-            Model\Article::class    => 'Статьи',
-            Model\Comment::class    => 'Комментарии',
-            Model\StaticPage::class => 'Статичные страницы',
-            Model\User::class       => 'Пользователи',
-            Model\Subscriber::class => 'Подсписчики',
-        ];
-
-        return $title[$className] ?? '';
     }
 }

@@ -16,26 +16,6 @@ use App\Model;
 
 class UserController extends AbstractRestController
 {
-    public function create(): Renderable
-    {
-        return new View('users.create', [
-            'title' => 'Регистрация',
-            'fields' => $this->getFields(),
-        ]);
-    }
-
-    public function store(): Renderable
-    {
-        if (! $this->checkForm($form = new Form\SignUp())) {
-            return Response::redirectBack();
-        }
-
-        $user = Model\User::createUser($_POST['email'], $_POST['password'], htmlentities($_POST['name']));
-        Auth::getInstance()->signIn($user);
-
-        return Response::redirect(PATH_ACCOUNT);
-    }
-
     public function edit(string $id): Renderable
     {
         if (! $user = Model\User::findById($id)) {
@@ -43,7 +23,6 @@ class UserController extends AbstractRestController
         }
 
         return new View('users.edit', [
-            'title' => 'Редактирование пользователя',
             'fields' => $this->getFields($user->attributes()),
             'user' => $user->attributes(),
         ]);
@@ -56,25 +35,13 @@ class UserController extends AbstractRestController
             return Response::redirectBack();
         }
 
-        if (isset($_POST['_active'])) {
-            return $this->activate($user);
-        }
-
-        if (isset($_POST['_avatar'])) {
-            return isset($_POST['_delete']) ? $this->deleteAvatar($user) : $this->updateAvatar($user);
-        }
-
-        if (isset($_POST['_group'])) {
-            return $this->activateGroup($user);
-        }
-
         if (! $this->checkForm(new Form\EditUser($id))) {
             return Response::redirectBack();
         }
 
         $user->updateAccount($_POST['email'], htmlentities($_POST['name']), htmlentities($_POST['about']));
 
-        new FlashMessage('Успех!', 'Данные пользователя обновлены');
+        FlashMessage::push('Успех!', 'Данные пользователя обновлены');
         return Response::redirectBack();
     }
 
@@ -86,55 +53,96 @@ class UserController extends AbstractRestController
 
         $user->delete();
 
-        new FlashMessage('', 'Пользователь ' . $user->name . ' удален');
+        FlashMessage::push('', 'Пользователь ' . $user->name . ' удален');
         return Response::redirectBack();
     }
 
-    private function activate(Model\User $user): Renderable
+    public function activate(string $id): Renderable
     {
-        $user->setActive($active = (new StringToBoolean())->format($_POST['_active']));
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
+        }
 
-        new FlashMessage('', 'Пользователь ' . $user->name . ($active ? ' активирован' : ' деактивирован'));
+        $user->setActive(true);
+
+        FlashMessage::push('', 'Пользователь ' . $user->name . ' активирован');
         return Response::redirectBack();
     }
 
-    private function updateAvatar(Model\User $user): Renderable
+    public function deactivate(string $id): Renderable
     {
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
+        }
+
+        $user->setActive(false);
+
+        FlashMessage::push('', 'Пользователь ' . $user->name . ' деактивирован');
+        return Response::redirectBack();
+    }
+
+    public function updateAvatar(string $id): Renderable
+    {
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
+        }
+
         $avatar = new Model\Image($user);
         if (! $avatar->save()) {
             foreach (($errors = $avatar->getErrors()) as $error) {
-                new FlashMessage('Ошибка!', $error, true);
+                FlashMessage::push('Ошибка!', $error, true);
             }
 
             return Response::redirectBack();
         }
 
-        new FlashMessage('', 'Аватар обновлён');
+        FlashMessage::push('', 'Аватар обновлён');
         return Response::redirectBack();
     }
 
-    private function deleteAvatar(Model\User $user): Renderable
+    public function deleteAvatar(string $id): Renderable
     {
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
+        }
+
         $avatar = new Model\Image($user);
         if (! $avatar->delete()) {
             foreach (($errors = $avatar->getErrors()) as $error) {
-                new FlashMessage('Ошибка!', $error, true);
+                FlashMessage::push('Ошибка!', $error, true);
             }
 
             return Response::redirectBack();
         }
 
-        new FlashMessage('', 'Аватар удалён');
+        FlashMessage::push('', 'Аватар удалён');
         return Response::redirectBack();
     }
 
-    private function activateGroup(Model\User $user): Renderable
+    public function joinGroup(string $id): Renderable
     {
-        if ($_POST['group_activate']) {
-            $user->joinGroup($_POST['_group']);
-        } else {
-            $user->leaveGroup($_POST['_group']);
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
         }
+
+        $user->joinGroup($_POST['group']);
+
+        return Response::redirectBack();
+    }
+
+    public function leaveGroup(string $id): Renderable
+    {
+        /** @var Model\User $user */
+        if (! $user = Model\User::findById($id)) {
+            return Response::redirectBack();
+        }
+
+        $user->leaveGroup($_POST['group']);
 
         return Response::redirectBack();
     }

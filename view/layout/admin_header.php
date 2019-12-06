@@ -74,4 +74,4 @@ use App\Router;
 
     </div>
 </header>
-<?php include VIEW_TEMPLATE . '/flash_messages.php'?>
+<?php App\View\FlashMessage::showAll();?>
